@@ -1,6 +1,8 @@
 package br.com.nexushub.domain;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.UUID;
 
 public class Cycle {
@@ -10,8 +12,7 @@ public class Cycle {
     private String description;
     private Double amountHours;
     private int lastStep;
-
-    private ArrayList<Sequence> sequence;
+    private List<Sequence> sequence;
 
     public Cycle(UUID id, String name, String description, Double amountHours, int lastStep, ArrayList<Sequence> sequence) {
         this.id = id;
@@ -77,6 +78,21 @@ public class Cycle {
         this.lastStep = lastStep;
     }
 
+    public void addSequence(Sequence sequence) {
+    	this.sequence.add(sequence);
+    }
+
+    public List<Sequence> getSequence(){
+        return sequence;
+    }
+
+    public void setSequence(List<Sequence> sequence) {
+    	this.sequence = sequence;
+
+
+
+}
+
     @Override
     public String toString() {
         return "Cycle{" +
@@ -85,7 +101,7 @@ public class Cycle {
                 ", description='" + description + '\'' +
                 ", amountHours=" + amountHours +
                 ", lastStep=" + lastStep +
-                ", sequence=" + sequence +
                 '}';
     }
 }
+

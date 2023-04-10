@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 public class DifficultyAlgorithm {
 
@@ -17,12 +18,18 @@ public class DifficultyAlgorithm {
                 new Subject(UUID.randomUUID(), "Biologia", 4, SubjectColor.ORANGE)));
         List<Sequence> sequence = new ArrayList<>();
         sequence = algorithm(subjects, cycle);
-        sequence = nextStep(sequence);
-        sequence = nextStep(sequence);
-        sequence = nextStep(sequence);
-        sequence = nextStep(sequence);
-        sequence = nextStep(sequence);
-        sequence = nextStep(sequence);
+        cycle.setSequence(sequence);
+        sequence = nextStep(cycle);
+        sequence = nextStep(cycle);
+        sequence = nextStep(cycle);
+        sequence = nextStep(cycle);
+        sequence = nextStep(cycle);
+        sequence = nextStep(cycle);
+        sequence.forEach(System.out::println);
+
+        Subject teste2 = new Subject("Quimica", 1, SubjectColor.YELLOW);
+        sequence = algorithm(List.of(teste2), cycle);
+        System.out.println("TESTEEEEEEE");
         sequence.forEach(System.out::println);
 
         Subject teste = new Subject("Quimica", 1, SubjectColor.YELLOW);
@@ -37,37 +44,43 @@ public class DifficultyAlgorithm {
         sequence.forEach(System.out::println);
     }
 
-    public static List<Sequence> algorithm(List<Subject> subject, Cycle cycle){
-        int totalDifficulty = subject.stream().mapToInt(Subject::getDifficulty).sum();
-        double value = (double) cycle.getAmountHours() / totalDifficulty;
-        List<Sequence> sequences = new ArrayList<>();
+    public static List<Sequence> algorithm(List<Subject> subject, Cycle cycle) {
         ArrayList<Subject> subjects = new ArrayList<>(subject);
+        if (cycle.getSequence() != null)
+            subjects.addAll(cycle.getSequence().stream().map(Sequence::getSubject).toList());
+
+        int totalDifficulty = subjects.stream().mapToInt(Subject::getDifficulty).sum();
+        double value = (double) cycle.getAmountHours() / totalDifficulty;
+        ArrayList<Sequence> sequences = new ArrayList<>();
         Collections.shuffle(subjects);
-        int totalHours = 0;
         for (int i = 0; i < subjects.size(); i++) {
             long duration = Math.round(value * subjects.get(i).getDifficulty() * 60);
-            totalHours += duration;
-            sequences.add(new Sequence(UUID.randomUUID(), LocalTime.MIN.plusMinutes(duration), LocalTime.MIN, i+1, SequenceStatus.PENDING, cycle, subjects.get(i)));
+            sequences.add(new Sequence(UUID.randomUUID(), LocalTime.MIN.plusMinutes(duration), LocalTime.MIN, i + 1, SequenceStatus.PENDING, cycle, subjects.get(i)));
         }
         cycle.setLastStep(1);
+        cycle.setSequence(sequences);
         sequences.get(0).setStatus(SequenceStatus.STUDYING);
         return sequences;
     }
 
-    public static List<Sequence> nextStep(List<Sequence> sequences){
+    public static List<Sequence> nextStep(Cycle cycle) {
+        List<Sequence> sequences = cycle.getSequence();
         for (int i = 1; i <= sequences.size(); i++) {
-            if (i == sequences.size()){
+
+            if (i == sequences.size()) {
                 sequences.stream().forEach(sequence -> sequence.setStatus(SequenceStatus.PENDING));
                 sequences.get(0).setStatus(SequenceStatus.STUDYING);
-                sequences.get(0).getCycle().setLastStep(1);
+                cycle.setLastStep(1);
                 break;
             }
-            Sequence sequence = sequences.get(i-1);
-            if (sequence.getStatus() == SequenceStatus.FINISHED || sequence.getStatus() == SequenceStatus.SKIPPED){
+
+            Sequence sequence = sequences.get(i - 1);
+            if (sequence.getStatus() == SequenceStatus.FINISHED || sequence.getStatus() == SequenceStatus.SKIPPED) {
                 continue;
             }
+
             sequence.setStatus(SequenceStatus.FINISHED);
-            sequence.getCycle().setLastStep(sequence.getSequenceNumber()+1);
+            cycle.setLastStep(sequence.getSequenceNumber() + 1);
             sequences.get(i).setStatus(SequenceStatus.STUDYING);
             break;
         }
