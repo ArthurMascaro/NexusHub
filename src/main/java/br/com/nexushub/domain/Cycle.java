@@ -103,6 +103,31 @@ public class Cycle {
         this.sequence = sequences;
     }
 
+    public void currentExecutionAlgorithmAddSubjects(List<Subject> subjects){
+        subjects = new ArrayList<>(subjects);
+        ArrayList<Subject> allSubjects = new ArrayList<>();
+        allSubjects.addAll(sequence.stream().map(Sequence::getSubject).toList());
+        allSubjects.addAll(subjects);
+
+        int totalDifficulty = allSubjects.stream().mapToInt(Subject::getDifficulty).sum();
+        double factor = amountHours / totalDifficulty;
+
+        var sequences = sequence;
+
+        for (int i = 0; i < allSubjects.size(); i++){
+            Subject currentSubject = allSubjects.get(i);
+            long duration = Math.round(currentSubject.getDifficulty() * factor * 60);
+            if (sequences.stream().anyMatch(sequence -> sequence.getSubject().getId().equals(currentSubject.getId()))){
+                int index = sequences.indexOf(sequences.stream().filter(sequence -> sequence.getSubject().getId().equals(currentSubject.getId())).findFirst().get());
+                sequences.get(index).setHours(LocalTime.MIN.plusMinutes(duration));
+            } else {
+                sequences.add(new Sequence(UUID.randomUUID(), LocalTime.MIN.plusMinutes(duration), LocalTime.MIN, i + 1, SequenceStatus.PENDING, this, currentSubject));
+            }
+        }
+
+        this.sequence = sequences;
+    }
+
     public void nextStep(){
         for (int i = 1; i <= sequence.size(); i++) {
 
@@ -129,7 +154,10 @@ public class Cycle {
         List<Subject> allSubjects = new ArrayList<>();
         allSubjects.addAll(subjects);
         allSubjects.addAll(sequence.stream().map(Sequence::getSubject).toList());
-        algorithm(allSubjects);
+        if (sequence.size() > 0)
+            currentExecutionAlgorithmAddSubjects(allSubjects);
+        else
+            algorithm(allSubjects);
     }
 
     public void removeSequenceSubject(Subject subject){
@@ -139,8 +167,10 @@ public class Cycle {
 
     public void addSubject(Subject subject){
         List<Subject> allSubjects = new ArrayList<>(List.of(subject));
-        allSubjects.addAll(sequence.stream().map(Sequence::getSubject).toList());
-        algorithm(allSubjects);
+        if (sequence.size() > 0)
+            currentExecutionAlgorithmAddSubjects(allSubjects);
+        else
+            algorithm(allSubjects);
     }
 
     public void updateSubject(Subject subject){
@@ -152,6 +182,8 @@ public class Cycle {
     //TODO: Implementar método para voltar sequência
     //TODO: Implementar método para voltar passo
     //TODO: Aprimorar método para atualizar sequência (se já estiver em andamento, não mudar dados dos subjects já executados nem a ordem)
+    //Todo: Mudar lista de sequências para linked list
+    //Todo: Implementar variavel numero na Sequence para saber a ordem de execução
 
     @Override
     public String toString() {

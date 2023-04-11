@@ -2,6 +2,7 @@ package br.com.nexushub.domain;
 
 import java.sql.Time;
 import java.time.LocalTime;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Sequence {
@@ -100,5 +101,20 @@ public class Sequence {
                 ", cycle=" + cycle +
                 ", subject=" + subject +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Sequence sequence = (Sequence) o;
+
+        return Objects.equals(id, sequence.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 }

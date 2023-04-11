@@ -41,7 +41,7 @@ public class DifficultyAlgorithm {
         cycle.getSequence().forEach(System.out::println);
 
         System.out.println("\n Teste Adicionar Lista de Elementos \n");
-        cycle.addListSubjects(new ArrayList<>(List.of(new Subject(UUID.randomUUID(), "TesteLista1", 4, SubjectColor.BLACK),
+        cycle.currentExecutionAlgorithmAddSubjects(new ArrayList<>(List.of(new Subject(UUID.randomUUID(), "TesteLista1", 4, SubjectColor.BLACK),
                 new Subject(UUID.randomUUID(), "TesteLista2", 7, SubjectColor.GRAY))));
         cycle.getSequence().forEach(System.out::println);
     }
