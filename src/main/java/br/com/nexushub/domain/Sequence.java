@@ -1,61 +1,46 @@
 package br.com.nexushub.domain;
 
-import java.sql.Time;
-import java.time.LocalTime;
-import java.util.Objects;
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class Sequence {
 
     private UUID id;
-    private LocalTime hours;
-    private LocalTime studiedHours;
     private int sequenceNumber;
-    private SequenceStatus status;
-    private Cycle cycle;
-    private Subject subject;
+    private int lastSequenceItemStep;
 
-    public Sequence(UUID id, LocalTime hours, LocalTime studiedHours, int sequenceNumber, SequenceStatus status, Cycle cycle, Subject subject) {
+    private SequenceStatus status;
+    private ArrayList<SequenceItem> sequenceItems = new ArrayList<>();
+
+    public Sequence(UUID id, int sequenceNumber, int lastSequenceItemStep, SequenceStatus status, ArrayList<SequenceItem> sequenceItems) {
         this.id = id;
-        this.hours = hours;
-        this.studiedHours = studiedHours;
         this.sequenceNumber = sequenceNumber;
+        this.lastSequenceItemStep = lastSequenceItemStep;
         this.status = status;
-        this.cycle = cycle;
-        this.subject = subject;
+        this.sequenceItems = sequenceItems;
     }
 
-    public Sequence(LocalTime hours, LocalTime studiedHours, int sequenceNumber, SequenceStatus status, Cycle cycle, Subject subject) {
-        this.hours = hours;
-        this.studiedHours = studiedHours;
+    public Sequence(UUID id, int sequenceNumber, int lastSequenceItemStep, SequenceStatus status) {
+        this.id = id;
         this.sequenceNumber = sequenceNumber;
+        this.lastSequenceItemStep = lastSequenceItemStep;
         this.status = status;
-        this.cycle = cycle;
-        this.subject = subject;
     }
 
     public UUID getId() {
         return id;
     }
 
+    public int getLastSequenceItemStep() {
+        return lastSequenceItemStep;
+    }
+
+    public void setLastSequenceItemStep(int lastSequenceItemStep) {
+        this.lastSequenceItemStep = lastSequenceItemStep;
+    }
+
     public void setId(UUID id) {
         this.id = id;
-    }
-
-    public LocalTime getHours() {
-        return hours;
-    }
-
-    public void setHours(LocalTime hours) {
-        this.hours = hours;
-    }
-
-    public LocalTime getStudiedHours() {
-        return studiedHours;
-    }
-
-    public void setStudiedHours(LocalTime studiedHours) {
-        this.studiedHours = studiedHours;
     }
 
     public int getSequenceNumber() {
@@ -66,6 +51,14 @@ public class Sequence {
         this.sequenceNumber = sequenceNumber;
     }
 
+    public ArrayList<SequenceItem> getSequenceItems() {
+        return sequenceItems;
+    }
+
+    public void setSequenceItems(ArrayList<SequenceItem> sequenceItems) {
+        this.sequenceItems = sequenceItems;
+    }
+
     public SequenceStatus getStatus() {
         return status;
     }
@@ -74,47 +67,18 @@ public class Sequence {
         this.status = status;
     }
 
-    public Cycle getCycle() {
-        return cycle;
-    }
-
-    public void setCycle(Cycle cycle) {
-        this.cycle = cycle;
-    }
-
-    public Subject getSubject() {
-        return subject;
-    }
-
-    public void setSubject(Subject subject) {
-        this.subject = subject;
+    public void addSequenceItem(SequenceItem sequenceItem) {
+        this.sequenceItems.add(sequenceItem);
     }
 
     @Override
     public String toString() {
         return "Sequence{" +
                 "id=" + id +
-                ", hours=" + hours +
-                ", studiedHours=" + studiedHours +
                 ", sequenceNumber=" + sequenceNumber +
+                ", lastSequenceItemStep=" + lastSequenceItemStep +
                 ", status=" + status +
-                ", cycle=" + cycle +
-                ", subject=" + subject +
+                ", sequenceItems=" + sequenceItems +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Sequence sequence = (Sequence) o;
-
-        return Objects.equals(id, sequence.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
     }
 }
