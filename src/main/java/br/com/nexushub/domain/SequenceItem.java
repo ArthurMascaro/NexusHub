@@ -13,6 +13,9 @@ public class SequenceItem {
     private SequenceItemStatus status;
     private Subject subject;
 
+    public SequenceItem() {
+    }
+
     public SequenceItem(UUID id, LocalTime hours, LocalTime studiedHours, int sequenceNumber, SequenceItemStatus status, Subject subject) {
         this.id = id;
         this.hours = hours;
@@ -103,5 +106,10 @@ public class SequenceItem {
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
+    }
+
+    public void reset(){
+        this.status = SequenceItemStatus.PENDING;
+        this.studiedHours = LocalTime.of(0,0);
     }
 }

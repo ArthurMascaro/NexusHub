@@ -8,7 +8,6 @@ public class Sequence {
     private UUID id;
     private int sequenceNumber;
     private int lastSequenceItemStep;
-
     private SequenceStatus status;
     private ArrayList<SequenceItem> sequenceItems = new ArrayList<>();
 
