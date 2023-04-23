@@ -61,5 +61,9 @@ public class DifficultyAlgorithm {
         cycle.getSequence().get(3).getSequenceItems().forEach(System.out::println);
         System.out.println("\n Sequencias Existentes \n");
         cycle.getSequence().forEach(System.out::println);
+
+        cycle.skipSequence();
+        System.out.println("\n Sequencias Existentes depois do skip \n");
+        cycle.getSequence().forEach(System.out::println);
     }
 }

@@ -219,9 +219,22 @@ public class Cycle {
         algorithm(lastSequence.getSequenceItems().stream().map(SequenceItem::getSubject).toList());
     }
 
-    //TODO: Implementar método para pular sequência
+    public void skipSequence(){
+        Sequence lastSequence = sequences.stream()
+                .filter(sequence -> sequence.getStatus().equals(SequenceStatus.RUNNING)).
+                findFirst().get();
+        var lastSequenceItems = lastSequence.getSequenceItems();
+        var newSequence = new Sequence(UUID.randomUUID(), lastSequence.getSequenceNumber() + 1, 1, SequenceStatus.RUNNING);
+        lastSequenceItems.stream().forEach(sequenceItem -> sequenceItem.reset());
+        lastSequenceItems.get(0).setStatus(SequenceItemStatus.STUDYING);
+        newSequence.setSequenceItems(lastSequenceItems);
+        sequences.add(newSequence);
+        lastSequence.setStatus(SequenceStatus.FINISHED);
+        lastSequence.getSequenceItems().stream().filter(sequenceItem -> !sequenceItem.getStatus().equals(SequenceItemStatus.FINISHED)).forEach(sequenceItem -> sequenceItem.setStatus(SequenceItemStatus.SKIPPED));
+    }
+
     //TODO: Criar AddHours para um Subject especifico
-    //TODO: DEBUGGAR TUDO
+    //TODO: DEBUGGAR TUDO (LastSequenceStep (colocar no 5 quando se skippar), horas e etc).
 
 
     @Override
