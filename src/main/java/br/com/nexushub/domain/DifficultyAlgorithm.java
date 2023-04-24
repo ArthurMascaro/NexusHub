@@ -54,7 +54,7 @@ public class DifficultyAlgorithm {
         System.out.println("\n Sequencias Existentes \n");
         cycle.getSequence().forEach(System.out::println);
 
-        cycle.currentExecutionAlgorithmAddSubjects(new ArrayList<>(List.of(new Subject(UUID.randomUUID(), "TesteLista1", 4, SubjectColor.BLACK),
+        cycle.currentExecutionAlgorithmAddSubjects(new ArrayList<>(List.of(new Subject(id, "TesteLista1", 4, SubjectColor.BLACK),
                 new Subject(UUID.randomUUID(), "TesteLista2", 7, SubjectColor.GRAY))));
         cycle.getSequence().stream().filter(sequence -> sequence.getStatus().equals(SequenceStatus.RUNNING)).findFirst().get().getSequenceItems().forEach(System.out::println);
         System.out.println(cycle.getSequence().stream().filter(sequence -> sequence.getStatus().equals(SequenceStatus.RUNNING)).findFirst().get().getSequenceNumber());
@@ -65,5 +65,9 @@ public class DifficultyAlgorithm {
         cycle.skipSequence();
         System.out.println("\n Sequencias Existentes depois do skip \n");
         cycle.getSequence().forEach(System.out::println);
+
+        System.out.println("\n Teste Adicionar Horas Matéria Especifica \n");
+        cycle.addHours(LocalTime.of(1, 6), new Subject(id, "TesteLista1", 4, SubjectColor.BLACK));
+        cycle.getSequence().stream().filter(sequence -> sequence.getStatus().equals(SequenceStatus.RUNNING)).findFirst().get().getSequenceItems().forEach(System.out::println);
     }
 }

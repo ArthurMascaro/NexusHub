@@ -93,21 +93,21 @@ public class Cycle {
     }
 
     public void currentExecutionAlgorithmAddSubjects(List<Subject> subjects){
-        subjects = new ArrayList<>(subjects);
-        ArrayList<Subject> allSubjects = new ArrayList<>();
-        allSubjects.addAll(subjects);
-        if (sequences.stream().filter(sequence -> sequence.getStatus().equals(SequenceStatus.RUNNING)).findFirst().isPresent()){
-            var lastSequence = sequences.stream().filter(sequence -> sequence.getStatus().equals(SequenceStatus.RUNNING)).findFirst().get();
-            var lastSequenceItems = lastSequence.getSequenceItems();
-            allSubjects.addAll(lastSequenceItems.stream().map(SequenceItem::getSubject).toList());
+
+        ArrayList<Subject> allSubjects = new ArrayList<>(subjects);
+
+        if (sequences.stream().noneMatch(sequence -> Objects.equals(sequence.getStatus(), SequenceStatus.RUNNING))){
+            algorithm(allSubjects);
         }
+
+        var lastSequence = sequences.stream().filter(sequence -> sequence.getStatus().equals(SequenceStatus.RUNNING)).findFirst().get();
+        var lastSequenceItems = lastSequence.getSequenceItems();
+        allSubjects.addAll(lastSequenceItems.stream().map(SequenceItem::getSubject).toList());
         Collections.shuffle(allSubjects);
 
         int totalDifficulty = allSubjects.stream().mapToInt(Subject::getDifficulty).sum();
         double factor = amountHours / totalDifficulty;
 
-        var lastSequence = sequences.stream().filter(sequence -> sequence.getStatus().equals(SequenceStatus.RUNNING)).findFirst().get();
-        var lastSequenceItems = lastSequence.getSequenceItems();
         var newSequence = new Sequence(UUID.randomUUID(), sequences.size()+1, 1, SequenceStatus.RUNNING);
 
         for (int i = 0; i < allSubjects.size(); i++){
@@ -136,24 +136,57 @@ public class Cycle {
         long currentStudyTime = currentSequenceItem.getStudiedHours().toNanoOfDay();
         long studiedTime = studiedHours.toNanoOfDay();
         long timeNeededForStudy = currentSequenceItem.getHours().toNanoOfDay();
-        if (currentStudyTime + studiedTime >= timeNeededForStudy){
-            currentSequenceItem.setStatus(SequenceItemStatus.FINISHED);
-            currentSequenceItem.setStudiedHours(currentSequenceItem.getHours());
-            if (lastSequenceItems.indexOf(currentSequenceItem) + 1 < lastSequenceItems.size()){
-                SequenceItem nextSequenceItem = lastSequenceItems.get(lastSequenceItems.indexOf(lastSequenceItems.stream().filter(sequenceItem -> sequenceItem.getStatus().equals(SequenceItemStatus.PENDING)).findFirst().get()));
-                nextSequenceItem.setStatus(SequenceItemStatus.STUDYING);
-                nextSequenceItem.setStudiedHours(LocalTime.MIN);
-            } else {
-                lastSequence.setStatus(SequenceStatus.FINISHED);
-                var newSequence = new Sequence(UUID.randomUUID(), lastSequence.getSequenceNumber() + 1, 1, SequenceStatus.RUNNING);
-                lastSequenceItems.stream().forEach(sequenceItem -> sequenceItem.reset());
-                lastSequenceItems.get(0).setStatus(SequenceItemStatus.STUDYING);
-                newSequence.setSequenceItems(lastSequenceItems);
-                sequences.add(newSequence);
-            }
-        } else {
+        if (currentStudyTime + studiedTime < timeNeededForStudy){
             currentSequenceItem.setStudiedHours(currentSequenceItem.getStudiedHours().plusSeconds(studiedHours.getSecond()).plusMinutes(studiedHours.getMinute()).plusHours(studiedHours.getHour()));
+            return;
         }
+
+        currentSequenceItem.setStatus(SequenceItemStatus.FINISHED);
+        currentSequenceItem.setStudiedHours(currentSequenceItem.getHours());
+        if (lastSequenceItems.indexOf(currentSequenceItem) + 1 < lastSequenceItems.size()){
+            SequenceItem nextSequenceItem = lastSequenceItems.get(lastSequenceItems.indexOf(lastSequenceItems.stream().filter(sequenceItem -> sequenceItem.getStatus().equals(SequenceItemStatus.PENDING)).findFirst().get()));
+            nextSequenceItem.setStatus(SequenceItemStatus.STUDYING);
+            nextSequenceItem.setStudiedHours(LocalTime.MIN);
+        } else {
+            lastSequence.setStatus(SequenceStatus.FINISHED);
+            newSequenceCreate(lastSequence.getSequenceNumber(), lastSequenceItems);
+        }
+    }
+
+    public void addHours(LocalTime studiedHours, Subject subject){
+        var lastSequence = sequences.stream().filter(sequence -> sequence.getStatus().equals(SequenceStatus.RUNNING)).findFirst().get();
+        var lastSequenceItems = lastSequence.getSequenceItems();
+        if (lastSequenceItems.stream().anyMatch(sequenceItem -> sequenceItem.getSubject().getId().equals(subject.getId()))){
+            var subjectSequenceItem = lastSequenceItems.stream().filter(sequenceItem -> sequenceItem.getSubject().getId().equals(subject.getId())).findFirst().get();
+
+            if (subjectSequenceItem.getStatus().equals(SequenceItemStatus.FINISHED) || subjectSequenceItem.getStatus().equals(SequenceItemStatus.SKIPPED))
+                return;
+
+            long currentStudyTime = subjectSequenceItem.getStudiedHours().toNanoOfDay();
+            long studiedTime = studiedHours.toNanoOfDay();
+            long timeNeededForStudy = subjectSequenceItem.getHours().toNanoOfDay();
+            if (currentStudyTime + studiedTime < timeNeededForStudy){
+                subjectSequenceItem.setStudiedHours(subjectSequenceItem.getStudiedHours().plusSeconds(studiedHours.getSecond()).plusMinutes(studiedHours.getMinute()).plusHours(studiedHours.getHour()));
+                return;
+            }
+
+            subjectSequenceItem.setStatus(SequenceItemStatus.FINISHED);
+            subjectSequenceItem.setStudiedHours(subjectSequenceItem.getHours());
+            if (lastSequenceItems.stream().allMatch(sequenceItem -> sequenceItem.getStatus().equals(SequenceItemStatus.FINISHED)) || lastSequenceItems.stream().allMatch(sequenceItem -> sequenceItem.getStatus().equals(SequenceItemStatus.SKIPPED))){
+                lastSequence.setStatus(SequenceStatus.FINISHED);
+                newSequenceCreate(lastSequence.getSequenceNumber(), lastSequenceItems);
+            }
+            return;
+        }
+        addHours(studiedHours);
+    }
+
+    private void newSequenceCreate(int sequenceNumber, ArrayList<SequenceItem> sequenceItems) {
+        var newSequence = new Sequence(UUID.randomUUID(), sequenceNumber + 1, 1, SequenceStatus.RUNNING);
+        newSequence.setSequenceItems(sequenceItems);
+        newSequence.getSequenceItems().forEach(SequenceItem::reset);
+        newSequence.getSequenceItems().get(0).setStatus(SequenceItemStatus.STUDYING);
+        sequences.add(newSequence);
     }
 
     public void skipStepItem(){
@@ -163,13 +196,9 @@ public class Cycle {
             SequenceItem currentSequenceItem = lastSequenceItems.get(i - 1);
             if (i == lastSequenceItems.size()) {
                 lastSequence.setStatus(SequenceStatus.FINISHED);
+                lastSequence.setLastSequenceItemStep(lastSequence.getSequenceItems().size());
                 currentSequenceItem.setStatus(SequenceItemStatus.FINISHED);
-                currentSequenceItem.setStudiedHours(currentSequenceItem.getHours());
-                var newSequence = new Sequence(UUID.randomUUID(), lastSequence.getSequenceNumber() + 1, 1, SequenceStatus.RUNNING);
-                lastSequenceItems.stream().forEach(sequenceItem -> sequenceItem.reset());
-                lastSequenceItems.get(0).setStatus(SequenceItemStatus.STUDYING);
-                newSequence.setSequenceItems(lastSequenceItems);
-                sequences.add(newSequence);
+                newSequenceCreate(lastSequence.getSequenceNumber(), lastSequenceItems);
                 break;
             }
 
@@ -178,7 +207,6 @@ public class Cycle {
             }
 
             currentSequenceItem.setStatus(SequenceItemStatus.FINISHED);
-            currentSequenceItem.setStudiedHours(currentSequenceItem.getHours());
             SequenceItem nextSequenceItem = lastSequenceItems.get(lastSequenceItems.indexOf(lastSequenceItems.stream().filter(sequenceItem -> sequenceItem.getStatus().equals(SequenceItemStatus.PENDING)).findFirst().get()));
             lastSequence.setLastSequenceItemStep(nextSequenceItem.getSequenceNumber());
             nextSequenceItem.setStatus(SequenceItemStatus.STUDYING);
@@ -187,8 +215,7 @@ public class Cycle {
     }
 
     public void addListSubjects(ArrayList<Subject> subjects){
-        List<Subject> allSubjects = new ArrayList<>();
-        allSubjects.addAll(subjects);
+        List<Subject> allSubjects = new ArrayList<>(subjects);
         if (sequences.size() > 0)
             currentExecutionAlgorithmAddSubjects(allSubjects);
         else
@@ -202,6 +229,7 @@ public class Cycle {
         lastSequence.getSequenceItems().removeIf(sequenceItem -> sequenceItem.getSubject().getId().equals(subject.getId()));
         lastSequence.setStatus(SequenceStatus.FINISHED);
         lastSequence.getSequenceItems().stream().filter(sequenceItem -> !sequenceItem.getStatus().equals(SequenceItemStatus.FINISHED)).forEach(sequenceItem -> sequenceItem.setStatus(SequenceItemStatus.SKIPPED));
+        lastSequence.setLastSequenceItemStep(lastSequence.getSequenceItems().size());
         algorithm(lastSequence.getSequenceItems().stream().map(SequenceItem::getSubject).toList());
     }
 
@@ -216,6 +244,7 @@ public class Cycle {
         lastSequence.getSequenceItems().stream().filter(sequenceItem -> sequenceItem.getSubject().getId().equals(subject.getId())).forEach(sequenceItem -> sequenceItem.setSubject(subject));
         lastSequence.getSequenceItems().stream().filter(sequenceItem -> !sequenceItem.getStatus().equals(SequenceItemStatus.FINISHED)).forEach(sequenceItem -> sequenceItem.setStatus(SequenceItemStatus.SKIPPED));
         lastSequence.setStatus(SequenceStatus.FINISHED);
+        lastSequence.setLastSequenceItemStep(lastSequence.getSequenceItems().size());
         algorithm(lastSequence.getSequenceItems().stream().map(SequenceItem::getSubject).toList());
     }
 
@@ -224,13 +253,10 @@ public class Cycle {
                 .filter(sequence -> sequence.getStatus().equals(SequenceStatus.RUNNING)).
                 findFirst().get();
         var lastSequenceItems = lastSequence.getSequenceItems();
-        var newSequence = new Sequence(UUID.randomUUID(), lastSequence.getSequenceNumber() + 1, 1, SequenceStatus.RUNNING);
-        lastSequenceItems.stream().forEach(sequenceItem -> sequenceItem.reset());
-        lastSequenceItems.get(0).setStatus(SequenceItemStatus.STUDYING);
-        newSequence.setSequenceItems(lastSequenceItems);
-        sequences.add(newSequence);
-        lastSequence.setStatus(SequenceStatus.FINISHED);
-        lastSequence.getSequenceItems().stream().filter(sequenceItem -> !sequenceItem.getStatus().equals(SequenceItemStatus.FINISHED)).forEach(sequenceItem -> sequenceItem.setStatus(SequenceItemStatus.SKIPPED));
+        lastSequence.setStatus(SequenceStatus.SKIPPED);
+        lastSequence.setLastSequenceItemStep(lastSequence.getSequenceItems().size());
+        lastSequenceItems.stream().filter(sequenceItem -> !sequenceItem.getStatus().equals(SequenceItemStatus.FINISHED)).forEach(sequenceItem -> sequenceItem.setStatus(SequenceItemStatus.SKIPPED));
+        newSequenceCreate(lastSequence.getSequenceNumber(), lastSequenceItems);
     }
 
     //TODO: Criar AddHours para um Subject especifico
