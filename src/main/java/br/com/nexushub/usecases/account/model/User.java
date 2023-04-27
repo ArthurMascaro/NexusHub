@@ -1,4 +1,4 @@
-package br.com.nexushub.domain;
+package br.com.nexushub.usecases.account.model;
 
 import java.util.UUID;
 
