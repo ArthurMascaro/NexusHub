@@ -8,7 +8,7 @@ import java.util.UUID;
 public class DifficultyAlgorithm {
 
     public static void main(String[] args) {
-        Cycle cycle = new Cycle(UUID.randomUUID(), "Ciclo 1", "Ciclo 1", 10.0);
+        Cycle cycle = new Cycle(UUID.randomUUID(), "Ciclo 1", "Ciclo 1", 10.0, UUID.randomUUID());
         List<Subject> subjects = new ArrayList<>(List.of(new Subject(UUID.randomUUID(), "Português", 7, SubjectColor.BLUE),
                 new Subject(UUID.randomUUID(), "Matemática", 3, SubjectColor.RED),
                 new Subject(UUID.randomUUID(), "História", 9 , SubjectColor.GREEN),

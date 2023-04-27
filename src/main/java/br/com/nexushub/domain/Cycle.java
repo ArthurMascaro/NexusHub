@@ -9,27 +9,31 @@ public class Cycle {
     private String name;
     private String description;
     private Double amountHours;
+    private UUID userId;
     private List<Sequence> sequences = new ArrayList<>();
 
-    public Cycle(UUID id, String name, String description, Double amountHours, ArrayList<Sequence> sequenceItem) {
+    public Cycle(UUID id, String name, String description, Double amountHours, UUID userId, List<Sequence> sequences) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.amountHours = amountHours;
-        this.sequences = sequenceItem;
+        this.userId = userId;
+        this.sequences = sequences;
     }
 
-    public Cycle(UUID id, String name, String description, Double amountHours) {
+    public Cycle(UUID id, String name, String description, Double amountHours, UUID userId) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.amountHours = amountHours;
+        this.userId = userId;
     }
 
-    public Cycle(String name, String description, Double amountHours) {
+    public Cycle(String name, String description, Double amountHours, UUID userId) {
         this.name = name;
         this.description = description;
         this.amountHours = amountHours;
+        this.userId = userId;
     }
 
     public UUID getId() {
@@ -74,6 +78,14 @@ public class Cycle {
 
     public void setSequence(List<Sequence> sequenceItem) {
     	this.sequences = sequenceItem;
+    }
+
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public void setUserId(UUID userId) {
+        this.userId = userId;
     }
 
     public void algorithm(List<Subject> subjects){
