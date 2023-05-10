@@ -45,11 +45,6 @@ public class SubjectController {
         return ResponseEntity.ok(SubjectResponse.createFromSubject(subjectCRUD.findSubjectById(id)));
     }
 
-    @GetMapping("/teste")
-    public ResponseEntity<String> teste(){
-        return ResponseEntity.ok("Teste");
-    }
-
     @PutMapping("/{id}")
     public ResponseEntity<SubjectResponse> updateSubjectById(@PathVariable("id") UUID id,
                                                               @RequestParam("name") String name,
