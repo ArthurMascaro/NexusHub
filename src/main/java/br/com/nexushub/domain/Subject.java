@@ -9,17 +9,25 @@ public class Subject {
     private int difficulty;
     private SubjectColor color;
 
-    public Subject(UUID id, String name, int difficulty, SubjectColor color) {
+    private Subject(UUID id, String name, int difficulty, SubjectColor color) {
         this.id = id;
         this.name = name;
         this.difficulty = difficulty;
         this.color = color;
     }
 
-    public Subject(String name, int difficulty, SubjectColor color) {
+    private Subject(String name, int difficulty, SubjectColor color) {
         this.name = name;
         this.difficulty = difficulty;
         this.color = color;
+    }
+
+    public static Subject createWithAllFields(UUID id, String name, int difficulty, SubjectColor color) {
+        return new Subject(id, name, difficulty, color);
+    }
+
+    public static Subject createWithoutId(String name, int difficulty, SubjectColor color) {
+        return new Subject(name, difficulty, color);
     }
 
     public UUID getId() {

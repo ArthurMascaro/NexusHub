@@ -1,1 +1,35 @@
+spring:
+  application:
+    name: nexus-hub-application
+  datasource:
+    url: jdbc:postgresql://localhost:5432/nexushub
+    username: nexushub-app
+    password: nexushub-app
+    driver-class-name: org.postgresql.Driver
+    jpa:
+      hibernate:
+        ddl-auto: update
+      properties:
+        hibernate:
+          dialetc: org.hibernate.dialect.PostgreSQLDialect
+          format_sql: true
+
+queries:
+  sql:
+    subject-dao:
+      insert:
+        subject: >
+          INSERT INTO nexushub_platform.subject(id, name , difficulty, color) VALUES (?, ?, ?, ?::nexushub_platform.subject_color)
+      update:
+        subject: >
+          UPDATE nexushub_platform.subject SET name=?, difficulty=?, color=?::nexushub_platform.subject_color WHERE id=?
+      delete:
+        subject: >
+          DELETE FROM nexushub_platform.subject WHERE id=?
+      select:
+        subject-by-id: >
+          SELECT * FROM nexushub_platform.subject WHERE id=?
+        subject-all: >
+          SELECT * FROM nexushub_platform.subject
+
 

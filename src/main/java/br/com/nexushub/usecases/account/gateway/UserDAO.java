@@ -1,4 +1,8 @@
 package br.com.nexushub.usecases.account.gateway;
 
-public interface UserDAO {
+import br.com.nexushub.usecases.account.model.User;
+
+import java.util.UUID;
+
+public interface UserDAO{
 }

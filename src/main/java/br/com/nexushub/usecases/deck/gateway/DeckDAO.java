@@ -1,4 +1,8 @@
 package br.com.nexushub.usecases.deck.gateway;
 
-public interface DeckDAO {
+import br.com.nexushub.domain.Deck;
+
+import java.util.UUID;
+
+public interface DeckDAO{
 }
