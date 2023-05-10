@@ -3,8 +3,11 @@ package br.com.nexushub.external.persistence;
 import br.com.nexushub.domain.Subject;
 import br.com.nexushub.domain.SubjectColor;
 import br.com.nexushub.usecases.subject.gateway.SubjectDAO;
+import br.com.nexushub.web.exception.GenericResourceException;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -14,10 +17,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Repository
 public class SubjectDAOimpl implements SubjectDAO {
@@ -35,6 +35,12 @@ public class SubjectDAOimpl implements SubjectDAO {
 
     @Value("${queries.sql.subject-dao.update.subject}")
     private String updateSubjectQuery;
+
+    @Value("${queries.sql.subject-dao.exists.subject-by-id}")
+    private String existsSubjectByIdQuery;
+
+    @Value("${queries.sql.subject-dao.delete.subject-by-id}")
+    private String deleteSubjectByIdQuery;
 
     public SubjectDAOimpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -56,19 +62,21 @@ public class SubjectDAOimpl implements SubjectDAO {
 
     @Override
     public Optional<Subject> findSubjectById(UUID id) {
-        Subject subject = jdbcTemplate.queryForObject(findSubjectByIdQuery, (rs, rowNum) -> {
-            try {
+        try {
+            Subject subject = jdbcTemplate.queryForObject(findSubjectByIdQuery, (rs, rowNum) -> {
                 UUID subjectId = (UUID) rs.getObject("id");
                 String name = rs.getString("name");
                 int difficulty = rs.getInt("difficulty");
                 SubjectColor color = SubjectColor.valueOf(rs.getString("color"));
                 return Subject.createWithAllFields(subjectId, name, difficulty, color);
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw new SQLException();
-            }
-        }, id);
-        return Optional.of(subject);
+            }, id);
+
+            return Optional.of(subject);
+
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+
     }
 
     @Override
@@ -93,9 +101,22 @@ public class SubjectDAOimpl implements SubjectDAO {
         return subjectArray;
     }
 
+    @Override
+    public boolean subjectExistsById(UUID id) {
+        Boolean exists = jdbcTemplate.queryForObject(existsSubjectByIdQuery, Boolean.class, id);
+        return Objects.nonNull(exists) && exists;
+    }
+
 
     @Override
-    public void deleteSubjectById(UUID id) {
+    public boolean deleteSubjectById(UUID id) {
+        Boolean existsSubject = subjectExistsById(id);
+        if (!existsSubject)
+            return false;
 
+        if (jdbcTemplate.update(deleteSubjectByIdQuery, id) != 1)
+            throw new GenericResourceException("Unexpected error when try delete subject with id=" + id, "Exclusion Error");
+
+        return true;
     }
 }

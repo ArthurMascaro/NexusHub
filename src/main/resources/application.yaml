@@ -24,8 +24,11 @@ queries:
         subject: >
           UPDATE nexushub_platform.subject SET name=?, difficulty=?, color=?::nexushub_platform.subject_color WHERE id=?
       delete:
-        subject: >
+        subject-by-id: >
           DELETE FROM nexushub_platform.subject WHERE id=?
+      exists:
+        subject-by-id: >
+          SELECT EXISTS(SELECT 1 FROM nexushub_platform.subject WHERE id=?)
       select:
         subject-by-id: >
           SELECT * FROM nexushub_platform.subject WHERE id=?

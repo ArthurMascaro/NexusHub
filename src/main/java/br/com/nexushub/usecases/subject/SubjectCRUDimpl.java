@@ -63,6 +63,7 @@ public class SubjectCRUDimpl implements SubjectCRUD {
 
     @Override
     public void deleteSubjectById(UUID subjectId) {
-
+        if(!subjectDAO.deleteSubjectById(subjectId))
+            throw new IllegalArgumentException("Subject not found");
     }
 }

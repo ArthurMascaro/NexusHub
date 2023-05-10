@@ -58,4 +58,9 @@ public class SubjectController {
         Subject subject = subjectCRUD.updateSubjectById(id, SubjectUpdateRequest.createWithAllFields(name, difficulty, SubjectColor.valueOf(color.toUpperCase())));
         return ResponseEntity.ok(SubjectResponse.createFromSubject(subject));
     }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<UUID> deleteSubjectById(@PathVariable("id") UUID id) {
+        subjectCRUD.deleteSubjectById(id);
+        return ResponseEntity.ok(id);
+    }
 }

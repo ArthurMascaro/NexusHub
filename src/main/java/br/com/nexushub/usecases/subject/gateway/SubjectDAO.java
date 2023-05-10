@@ -16,5 +16,7 @@ public interface SubjectDAO {
 
         ArrayList<Subject> findAllSubjects();
 
-        void deleteSubjectById(UUID id);
+        boolean deleteSubjectById(UUID id);
+
+        boolean subjectExistsById(UUID id);
 }
