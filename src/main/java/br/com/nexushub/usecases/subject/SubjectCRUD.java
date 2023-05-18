@@ -2,7 +2,6 @@ package br.com.nexushub.usecases.subject;
 
 import br.com.nexushub.domain.Subject;
 import br.com.nexushub.domain.SubjectColor;
-import br.com.nexushub.web.model.subject.request.SubjectUpdateRequest;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -13,7 +12,7 @@ public interface SubjectCRUD {
 
     Subject findSubjectById(UUID subjectId);
 
-    Subject updateSubjectById(UUID subjectId, SubjectUpdateRequest request);
+    Subject updateSubjectById(UUID subjectId, String name, int difficulty, SubjectColor color);
 
     ArrayList<Subject> findAllSubjects();
 

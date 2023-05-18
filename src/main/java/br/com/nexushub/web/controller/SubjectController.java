@@ -3,7 +3,7 @@ package br.com.nexushub.web.controller;
 import br.com.nexushub.domain.Subject;
 import br.com.nexushub.domain.SubjectColor;
 import br.com.nexushub.usecases.subject.SubjectCRUD;
-import br.com.nexushub.web.model.subject.request.SubjectUpdateRequest;
+import br.com.nexushub.web.model.subject.request.SubjectDto;
 import br.com.nexushub.web.model.subject.response.SubjectResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,10 +25,8 @@ public class SubjectController {
 
     @PostMapping("/save")
     public ResponseEntity<SubjectResponse> createNewSubject(
-            @RequestParam("name") String name,
-            @RequestParam("difficulty") int difficulty,
-            @RequestParam("color") String color) {
-        Subject subject = subjectCRUD.createNewSubject(name, difficulty, SubjectColor.valueOf(color.toUpperCase()));
+            @RequestBody SubjectDto subjectDto) {
+        Subject subject = subjectCRUD.createNewSubject(subjectDto.name(), subjectDto.difficulty(), subjectDto.color());
         return ResponseEntity.ok(SubjectResponse.createFromSubject(subject));
     }
 
@@ -46,11 +44,8 @@ public class SubjectController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SubjectResponse> updateSubjectById(@PathVariable("id") UUID id,
-                                                              @RequestParam("name") String name,
-                                                              @RequestParam("difficulty") int difficulty,
-                                                              @RequestParam("color") String color) {
-        Subject subject = subjectCRUD.updateSubjectById(id, SubjectUpdateRequest.createWithAllFields(name, difficulty, SubjectColor.valueOf(color.toUpperCase())));
+    public ResponseEntity<SubjectResponse> updateSubjectById(@PathVariable("id") UUID id, @RequestBody SubjectDto subjectDto) {
+        Subject subject = subjectCRUD.updateSubjectById(id, subjectDto.name(), subjectDto.difficulty(), subjectDto.color());
         return ResponseEntity.ok(SubjectResponse.createFromSubject(subject));
     }
     @DeleteMapping("/{id}")

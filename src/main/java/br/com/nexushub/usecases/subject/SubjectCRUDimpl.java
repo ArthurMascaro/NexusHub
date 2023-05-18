@@ -6,7 +6,6 @@ import br.com.nexushub.usecases.subject.gateway.SubjectDAO;
 import br.com.nexushub.usecases.util.Notification;
 import br.com.nexushub.usecases.util.Validator;
 import br.com.nexushub.web.exception.ResourceNotFoundException;
-import br.com.nexushub.web.model.subject.request.SubjectUpdateRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -37,21 +36,21 @@ public class SubjectCRUDimpl implements SubjectCRUD {
         Optional<Subject> subjectOptional = subjectDAO.findSubjectById(subjectId);
 
         if (subjectOptional.isEmpty())
-            throw new IllegalArgumentException("Subject not found");
+            throw new ResourceNotFoundException("Subject not found");
 
         return subjectOptional.get();
     }
 
     @Override
-    public Subject updateSubjectById(UUID subjectId, SubjectUpdateRequest request) {
+    public Subject updateSubjectById(UUID subjectId, String name, int difficulty, SubjectColor color) {
         Optional<Subject> subjectOptional = subjectDAO.findSubjectById(subjectId);
         if (subjectOptional.isEmpty())
             throw new ResourceNotFoundException("Not found group participation with id: " + subjectId);
 
         var subject = subjectOptional.get();
-        subject.setName(request.getName());
-        subject.setDifficulty(request.getDifficulty());
-        subject.setColor(request.getColor());
+        subject.setName(name);
+        subject.setDifficulty(difficulty);
+        subject.setColor(color);
         subjectDAO.updateSubject(subject);
         return subject;
     }

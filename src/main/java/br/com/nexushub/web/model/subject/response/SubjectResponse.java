@@ -6,17 +6,11 @@ import br.com.nexushub.domain.SubjectColor;
 import java.util.UUID;
 
 public class SubjectResponse {
-
-    private UUID id;
     private String name;
     private int difficulty;
     private SubjectColor color;
 
-    public SubjectResponse() {
-    }
-
-    public SubjectResponse(UUID id, String name, int difficulty, SubjectColor color) {
-        this.id = id;
+    private SubjectResponse(String name, int difficulty, SubjectColor color) {
         this.name = name;
         this.difficulty = difficulty;
         this.color = color;
@@ -24,19 +18,10 @@ public class SubjectResponse {
 
     public static SubjectResponse createFromSubject(Subject subject) {
         return new SubjectResponse(
-                subject.getId(),
                 subject.getName(),
                 subject.getDifficulty(),
                 subject.getColor()
         );
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -62,4 +47,5 @@ public class SubjectResponse {
     public void setColor(SubjectColor color) {
         this.color = color;
     }
+
 }
