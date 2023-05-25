@@ -6,9 +6,11 @@ import br.com.nexushub.usecases.subject.gateway.SubjectDAO;
 import br.com.nexushub.usecases.util.Notification;
 import br.com.nexushub.usecases.util.Validator;
 import br.com.nexushub.web.exception.ResourceNotFoundException;
+import br.com.nexushub.web.model.subject.request.SubjectDto;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,14 +23,15 @@ public class SubjectCRUDimpl implements SubjectCRUD {
         this.subjectDAO = subjectDAO;
     }
     @Override
-    public Subject createNewSubject(String name, int difficulty, SubjectColor color) {
+    public Subject createNewSubject(SubjectDto subjectDto) {
+        Subject subject = subjectDto.toSubject();
         Validator<Subject> validator = new SubjectInputRequestValidator();
-        Notification notification = validator.validate(Subject.createWithoutId(name, difficulty, color));
+        Notification notification = validator.validate(subject);
 
         if (notification.hasErros())
             throw new IllegalArgumentException(notification.errorMessage());
 
-        return subjectDAO.saveNewSubject(name, difficulty, color);
+        return subjectDAO.saveNewSubject(subject);
     }
 
     @Override
@@ -42,21 +45,28 @@ public class SubjectCRUDimpl implements SubjectCRUD {
     }
 
     @Override
-    public Subject updateSubjectById(UUID subjectId, String name, int difficulty, SubjectColor color) {
+    public Subject updateSubjectById(UUID subjectId, SubjectDto subjectDto) {
+        Subject subjectUpdate = subjectDto.toSubject();
         Optional<Subject> subjectOptional = subjectDAO.findSubjectById(subjectId);
         if (subjectOptional.isEmpty())
             throw new ResourceNotFoundException("Not found group participation with id: " + subjectId);
 
+        Validator<Subject> validator = new SubjectInputRequestValidator();
+        Notification notification = validator.validate(subjectUpdate);
+
+        if (notification.hasErros())
+            throw new IllegalArgumentException(notification.errorMessage());
+
         var subject = subjectOptional.get();
-        subject.setName(name);
-        subject.setDifficulty(difficulty);
-        subject.setColor(color);
+        subject.setName(subjectUpdate.getName());
+        subject.setDifficulty(subjectUpdate.getDifficulty());
+        subject.setColor(subjectUpdate.getColor());
         subjectDAO.updateSubject(subject);
         return subject;
     }
 
     @Override
-    public ArrayList<Subject> findAllSubjects() {
+    public List<Subject> findAllSubjects() {
         return subjectDAO.findAllSubjects();
     }
 

@@ -26,13 +26,13 @@ public class SubjectController {
     @PostMapping("/save")
     public ResponseEntity<SubjectResponse> createNewSubject(
             @RequestBody SubjectDto subjectDto) {
-        Subject subject = subjectCRUD.createNewSubject(subjectDto.name(), subjectDto.difficulty(), subjectDto.color());
+        Subject subject = subjectCRUD.createNewSubject(subjectDto);
         return ResponseEntity.ok(SubjectResponse.createFromSubject(subject));
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<SubjectResponse>> findAllSubjects() {
-        ArrayList<Subject> subjects = subjectCRUD.findAllSubjects();
+        List<Subject> subjects = subjectCRUD.findAllSubjects();
         return ResponseEntity.ok(subjects.stream()
                 .map(SubjectResponse::createFromSubject)
                 .collect(Collectors.toList()));
@@ -45,7 +45,7 @@ public class SubjectController {
 
     @PutMapping("/{id}")
     public ResponseEntity<SubjectResponse> updateSubjectById(@PathVariable("id") UUID id, @RequestBody SubjectDto subjectDto) {
-        Subject subject = subjectCRUD.updateSubjectById(id, subjectDto.name(), subjectDto.difficulty(), subjectDto.color());
+        Subject subject = subjectCRUD.updateSubjectById(id, subjectDto);
         return ResponseEntity.ok(SubjectResponse.createFromSubject(subject));
     }
     @DeleteMapping("/{id}")

@@ -1,5 +1,6 @@
 package br.com.nexushub.web.model.subject.request;
 
+import br.com.nexushub.domain.Subject;
 import br.com.nexushub.domain.SubjectColor;
 
 import java.util.Objects;
@@ -14,5 +15,9 @@ public record SubjectDto(String name, int difficulty, SubjectColor color) {
 
         this.color = color;
         if (color.name().isEmpty()) throw new IllegalArgumentException("Color must not be empty!");
+    }
+
+    public Subject toSubject() {
+        return Subject.createWithoutId(name, difficulty, color);
     }
 }

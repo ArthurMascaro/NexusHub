@@ -22,12 +22,24 @@ public class Subject {
         this.color = color;
     }
 
+    private Subject(UUID id) {
+        this.id = id;
+    }
+
     public static Subject createWithAllFields(UUID id, String name, int difficulty, SubjectColor color) {
         return new Subject(id, name, difficulty, color);
     }
 
     public static Subject createWithoutId(String name, int difficulty, SubjectColor color) {
         return new Subject(name, difficulty, color);
+    }
+
+    public static Subject createWithOnlyId(UUID id) {
+        return new Subject(id);
+    }
+
+    public Subject getNewInstanceWithId(UUID id){
+        return new Subject(id, name, difficulty, color);
     }
 
     public UUID getId() {

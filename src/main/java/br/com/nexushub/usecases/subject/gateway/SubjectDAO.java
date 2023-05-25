@@ -4,17 +4,18 @@ import br.com.nexushub.domain.Subject;
 import br.com.nexushub.domain.SubjectColor;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface SubjectDAO {
-        Subject saveNewSubject(String name, int difficulty, SubjectColor color);
+        Subject saveNewSubject(Subject subject);
 
         void updateSubject(Subject subject);
 
         Optional<Subject> findSubjectById(UUID id);
 
-        ArrayList<Subject> findAllSubjects();
+        List<Subject> findAllSubjects();
 
         boolean deleteSubjectById(UUID id);
 

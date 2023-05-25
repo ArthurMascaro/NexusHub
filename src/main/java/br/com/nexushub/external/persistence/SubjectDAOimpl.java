@@ -4,19 +4,13 @@ import br.com.nexushub.domain.Subject;
 import br.com.nexushub.domain.SubjectColor;
 import br.com.nexushub.usecases.subject.gateway.SubjectDAO;
 import br.com.nexushub.web.exception.GenericResourceException;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.*;
 
 @Repository
@@ -48,10 +42,10 @@ public class SubjectDAOimpl implements SubjectDAO {
 
     @Transactional
     @Override
-    public Subject saveNewSubject(String name, int difficulty, SubjectColor color) {
+    public Subject saveNewSubject(Subject subject) {
         UUID subjectId = UUID.randomUUID();
-        jdbcTemplate.update(insertSubjectQuery, subjectId, name, difficulty, color.name());
-        return Subject.createWithAllFields(subjectId, name, difficulty, color);
+        jdbcTemplate.update(insertSubjectQuery, subjectId, subject.getName(), subject.getDifficulty(), subject.getColor().name());
+        return subject.getNewInstanceWithId(subjectId);
     }
 
     @Override
@@ -80,8 +74,8 @@ public class SubjectDAOimpl implements SubjectDAO {
     }
 
     @Override
-    public ArrayList<Subject> findAllSubjects() {
-        ArrayList<Subject> subjectArray = new ArrayList<>();
+    public List<Subject> findAllSubjects() {
+        List<Subject> subjectArray = new ArrayList<>();
 
         jdbcTemplate.query(findAllSubjectsQuery, (rs, rowNum) -> {
             try {
@@ -111,6 +105,7 @@ public class SubjectDAOimpl implements SubjectDAO {
     @Override
     public boolean deleteSubjectById(UUID id) {
         Boolean existsSubject = subjectExistsById(id);
+
         if (!existsSubject)
             return false;
 
