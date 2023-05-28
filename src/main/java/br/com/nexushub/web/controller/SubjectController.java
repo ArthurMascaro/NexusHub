@@ -38,9 +38,12 @@ public class SubjectController {
                 .collect(Collectors.toList()));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<SubjectResponse> findSubjectById(@PathVariable("id") UUID id) {
-        return ResponseEntity.ok(SubjectResponse.createFromSubject(subjectCRUD.findSubjectById(id)));
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<SubjectResponse>> findSubjectByUserId(@PathVariable("userId") UUID userId) {
+        List<Subject> subjects = subjectCRUD.findSubjectByUserId(userId);
+        return ResponseEntity.ok(subjects.stream()
+                .map(SubjectResponse::createFromSubject)
+                .collect(Collectors.toList()));
     }
 
     @PutMapping("/{id}")

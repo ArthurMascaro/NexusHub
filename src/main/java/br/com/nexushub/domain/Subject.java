@@ -9,11 +9,21 @@ public class Subject {
     private int difficulty;
     private SubjectColor color;
 
-    private Subject(UUID id, String name, int difficulty, SubjectColor color) {
+    private UUID ownerId;
+
+    private Subject(UUID id, String name, int difficulty, SubjectColor color, UUID ownerId) {
         this.id = id;
         this.name = name;
         this.difficulty = difficulty;
         this.color = color;
+        this.ownerId = ownerId;
+    }
+
+    private Subject(String name, int difficulty, SubjectColor color, UUID ownerId) {
+        this.name = name;
+        this.difficulty = difficulty;
+        this.color = color;
+        this.ownerId = ownerId;
     }
 
     private Subject(String name, int difficulty, SubjectColor color) {
@@ -26,20 +36,20 @@ public class Subject {
         this.id = id;
     }
 
-    public static Subject createWithAllFields(UUID id, String name, int difficulty, SubjectColor color) {
-        return new Subject(id, name, difficulty, color);
+    public static Subject createWithAllFields(UUID id, String name, int difficulty, SubjectColor color, UUID ownerId) {
+        return new Subject(id, name, difficulty, color, ownerId);
     }
 
-    public static Subject createWithoutId(String name, int difficulty, SubjectColor color) {
+    public static Subject createWithoutId(String name, int difficulty, SubjectColor color, UUID ownerId) {
+        return new Subject(name, difficulty, color, ownerId);
+    }
+
+    public static Subject createWithoutIdAndOwner(String name, int difficulty, SubjectColor color) {
         return new Subject(name, difficulty, color);
     }
 
-    public static Subject createWithOnlyId(UUID id) {
-        return new Subject(id);
-    }
-
     public Subject getNewInstanceWithId(UUID id){
-        return new Subject(id, name, difficulty, color);
+        return new Subject(id, name, difficulty, color, ownerId);
     }
 
     public UUID getId() {

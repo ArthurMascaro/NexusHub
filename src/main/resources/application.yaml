@@ -1,3 +1,9 @@
+security:
+  jwt:
+    secret-key: 'adonaaranhasubiupelaparedeveioachuvaforteeaderrubouadonaaranhasubiupelaparedeveioachuvaforteeaderrubouadonaaranhasubiupelaparedeveioachuvaforteeaderrubou'
+    token-prefix: 'Bearer '
+    token-expiration: 60
+
 spring:
   application:
     name: nexus-hub-application
@@ -6,6 +12,9 @@ spring:
     username: nexushub-app
     password: nexushub-app
     driver-class-name: org.postgresql.Driver
+    platform: postgres
+    testWhileIdle: true
+    validationQuery: SELECT 1
     jpa:
       hibernate:
         ddl-auto: update
@@ -34,5 +43,20 @@ queries:
           SELECT * FROM nexushub_platform.subject WHERE id=?
         subject-all: >
           SELECT * FROM nexushub_platform.subject
+        subject-by-user-id: >
+          SELECT * FROM nexushub_platform.subject WHERE owner_id=?
+    application-user:
+      insert:
+        application-user: >
+          INSERT INTO nexushub_platform.application_user(id, name, username, password, 
+          is_account_non_expired, is_account_nonLocked, is_credentials_non_expired, is_enabled) 
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+
+      select:
+        application-user-by-username: >
+          SELECT * FROM nexushub_platform.application_user WHERE username=?
+        application-user-by-id: >
+          SELECT * FROM nexushub_platform.application_user WHERE id=?
+      
 
 

@@ -16,6 +16,7 @@ public interface SubjectDAO {
         Optional<Subject> findSubjectById(UUID id);
 
         List<Subject> findAllSubjects();
+        List<Subject> findAllSubjectsByUserId(UUID userId);
 
         boolean deleteSubjectById(UUID id);
 

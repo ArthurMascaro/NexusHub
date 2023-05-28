@@ -18,5 +18,7 @@ public interface SubjectCRUD {
 
     List<Subject> findAllSubjects();
 
+    List<Subject> findSubjectByUserId(UUID userId);
+
     void deleteSubjectById(UUID subjectId);
 }

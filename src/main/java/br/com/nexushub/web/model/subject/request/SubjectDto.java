@@ -18,6 +18,6 @@ public record SubjectDto(String name, int difficulty, SubjectColor color) {
     }
 
     public Subject toSubject() {
-        return Subject.createWithoutId(name, difficulty, color);
+        return Subject.createWithoutIdAndOwner(name, difficulty, color);
     }
 }

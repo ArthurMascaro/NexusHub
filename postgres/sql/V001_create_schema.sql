@@ -6,7 +6,6 @@ CREATE TABLE nexushub_platform.application_user(
     id uuid NOT NULL,
     name varchar NOT NULL,
     username varchar NOT NULL UNIQUE,
-    login varchar NOT NULL UNIQUE,
     password varchar NOT NULL,
     is_account_non_expired boolean default false,
     is_account_nonLocked boolean default false,
@@ -14,7 +13,7 @@ CREATE TABLE nexushub_platform.application_user(
     is_enabled boolean default false
 );
 
-ALTER TABLE nexushub_platform.application_user OWNER TO "pipegine";
+ALTER TABLE nexushub_platform.application_user OWNER TO "nexushub";
 
 ALTER TABLE nexushub_platform.application_user
     ADD CONSTRAINT application_user_pkey PRIMARY KEY (id);
@@ -39,7 +38,7 @@ CREATE TABLE nexushub_platform.subject(
     id uuid not null,
     name varchar(255) not null,
     difficulty integer not null,
-    user_id uuid not null,
+    owner_id uuid not null,
     color nexushub_platform.subject_color not null
 );
 
@@ -50,13 +49,13 @@ ALTER TABLE nexushub_platform.subject
 
 ALTER TABLE nexushub_platform.subject
     ADD CONSTRAINT subject_user_fk
-        FOREIGN KEY (user_id) REFERENCES nexushub_platform.application_user(id);
+        FOREIGN KEY (owner_id) REFERENCES nexushub_platform.application_user(id);
 
 CREATE TABLE nexushub_platform.cycle(
     id uuid not null,
     name varchar(255) not null,
     description varchar(255),
-    user_id uuid not null,
+    owner_id uuid not null,
     amount_hours float not null
 );
 
@@ -67,7 +66,7 @@ ALTER TABLE nexushub_platform.cycle
 
 ALTER TABLE nexushub_platform.cycle
     ADD CONSTRAINT cycle_user_fk
-        FOREIGN KEY (user_id) REFERENCES nexushub_platform.application_user(id);
+        FOREIGN KEY (owner_id) REFERENCES nexushub_platform.application_user(id);
 
 CREATE TYPE nexushub_platform.sequence_status AS ENUM (
     'RUNNING',

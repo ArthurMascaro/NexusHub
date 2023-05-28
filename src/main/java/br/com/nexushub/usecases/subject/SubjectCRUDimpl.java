@@ -71,6 +71,14 @@ public class SubjectCRUDimpl implements SubjectCRUD {
     }
 
     @Override
+    public List<Subject> findSubjectByUserId(UUID userId) {
+        /*if (userDao.findUserById(userId).isEmpty())
+            throw new ResourceNotFoundException("User not found");*/
+
+        return subjectDAO.findAllSubjectsByUserId(userId);
+    }
+
+    @Override
     public void deleteSubjectById(UUID subjectId) {
         if(!subjectDAO.deleteSubjectById(subjectId))
             throw new IllegalArgumentException("Subject not found");
