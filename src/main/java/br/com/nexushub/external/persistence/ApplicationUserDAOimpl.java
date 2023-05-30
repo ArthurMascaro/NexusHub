@@ -1,6 +1,5 @@
 package br.com.nexushub.external.persistence;
 
-import br.com.nexushub.configuration.security.PasswordConfig;
 import br.com.nexushub.usecases.account.gateway.ApplicationUserDAO;
 import br.com.nexushub.usecases.account.model.ApplicationUser;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,7 +29,7 @@ public class ApplicationUserDAOimpl implements ApplicationUserDAO {
 
     private JdbcTemplate jdbcTemplate;
 
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     public ApplicationUserDAOimpl(JdbcTemplate jdbcTemplate, PasswordEncoder passwordEncoder) {
         this.jdbcTemplate = jdbcTemplate;

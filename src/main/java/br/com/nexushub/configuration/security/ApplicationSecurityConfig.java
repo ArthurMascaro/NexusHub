@@ -1,68 +1,56 @@
 package br.com.nexushub.configuration.security;
 
-import br.com.nexushub.configuration.properties.model.JwtProperties;
-import br.com.nexushub.configuration.security.jwt.JwtTokenVerifier;
-import br.com.nexushub.configuration.security.jwt.JwtUsernameAndPasswordAuthenticationFilter;
-import br.com.nexushub.usecases.account.ApplicationUserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import br.com.nexushub.configuration.security.jwt.JwtAuthenticationFilter;
+import br.com.nexushub.configuration.security.jwt.JwtUtil;
+import br.com.nexushub.usecases.account.ApplicationUserCRUDimpl;
+import br.com.nexushub.usecases.account.model.ApplicationUserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import javax.crypto.SecretKey;
-import java.util.Arrays;
-
 @Configuration
 @EnableWebSecurity
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final ApplicationUserService applicationUserService;
     private final PasswordEncoder passwordEncoder;
-    private final SecretKey secretKey;
-    private final JwtProperties jwtProperties;
-    private final ObjectMapper objectMapper;
+    private final ApplicationUserService applicationUserService;
+    private final JwtUtil jwtUtil;
 
-    public ApplicationSecurityConfig(ApplicationUserService applicationUserService, PasswordEncoder passwordEncoder, SecretKey secretKey, JwtProperties jwtProperties, ObjectMapper objectMapper) {
-        this.applicationUserService = applicationUserService;
+    public ApplicationSecurityConfig(PasswordEncoder passwordEncoder, ApplicationUserService applicationUserService, JwtUtil jwtUtil) {
         this.passwordEncoder = passwordEncoder;
-        this.secretKey = secretKey;
-        this.jwtProperties = jwtProperties;
-        this.objectMapper = objectMapper;
+        this.applicationUserService = applicationUserService;
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
         http
-
                 .cors().and()
                 .csrf().disable()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(
-                        authenticationManager(), objectMapper, jwtProperties, secretKey))
-                .addFilterAfter(new JwtTokenVerifier(secretKey, jwtProperties),
-                        JwtUsernameAndPasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers( "/login").permitAll()
                 .antMatchers("/register").permitAll()
-                .antMatchers("/api/v1/**").authenticated()
-                        .anyRequest().authenticated();
+                .antMatchers("/login").permitAll()
+                        .anyRequest().authenticated()
+                .and()
+                .addFilter(new JwtAuthenticationFilter(jwtUtil, authenticationManager()));
     }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(daoAuthenticationProvider());
     }
 
@@ -71,8 +59,14 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(passwordEncoder);
         provider.setUserDetailsService(applicationUserService);
-
         return provider;
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource(){
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+        return source;
     }
 
 }

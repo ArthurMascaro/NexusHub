@@ -52,6 +52,11 @@ public class ApplicationUser implements UserDetails {
         this.password = password;
     }
 
+    public ApplicationUser(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
     public static ApplicationUser createFromApplicationUser(String name, String username, String password) {
         return new ApplicationUser(name, username, password);
     }

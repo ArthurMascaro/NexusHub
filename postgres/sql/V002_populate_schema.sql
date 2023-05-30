@@ -4,7 +4,7 @@
 --! CRIA USUARIO --!
 insert into nexushub_platform.application_user (id, name, username, password,
     is_account_non_expired, is_account_nonlocked, is_credentials_non_expired, is_enabled)
-        values ('f7467ed7-624e-4834-94c3-388dc6ec3072', 'arthur mascaro', 'arthur', 'admin', true, true, true, true);
+        values ('f7467ed7-624e-4834-94c3-388dc6ec3072'::uuid, 'arthur mascaro', 'arthur', '$2a$10$Jw8xjo5aMTEfYICDI19VNulcj3RBYl4vgOSj5q5EZdX0u7Uym0Jty', true, true, true, true);
 
 --! CRIA MATERIAS PARA USUÁRIO --!
 insert into nexushub_platform.subject (id, name, difficulty, owner_id, color)
