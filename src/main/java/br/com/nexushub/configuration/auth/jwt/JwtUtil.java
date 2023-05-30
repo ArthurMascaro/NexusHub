@@ -1,4 +1,4 @@
-package br.com.nexushub.configuration.security.jwt;
+package br.com.nexushub.configuration.auth.jwt;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

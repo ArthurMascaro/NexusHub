@@ -1,5 +1,6 @@
 package br.com.nexushub.usecases.subject;
 
+import br.com.nexushub.configuration.auth.jwt.IAuthenticationFacade;
 import br.com.nexushub.domain.Subject;
 import br.com.nexushub.domain.SubjectColor;
 import br.com.nexushub.usecases.subject.gateway.SubjectDAO;
@@ -19,9 +20,13 @@ public class SubjectCRUDimpl implements SubjectCRUD {
 
     private final SubjectDAO subjectDAO;
 
-    public SubjectCRUDimpl(SubjectDAO subjectDAO) {
+    private final IAuthenticationFacade authentication;
+
+    public SubjectCRUDimpl(SubjectDAO subjectDAO, IAuthenticationFacade authentication) {
         this.subjectDAO = subjectDAO;
+        this.authentication = authentication;
     }
+
     @Override
     public Subject createNewSubject(SubjectDto subjectDto) {
         Subject subject = subjectDto.toSubject();
@@ -30,6 +35,8 @@ public class SubjectCRUDimpl implements SubjectCRUD {
 
         if (notification.hasErros())
             throw new IllegalArgumentException(notification.errorMessage());
+
+        System.out.println(authentication.getUserAuthenticatedId());
 
         return subjectDAO.saveNewSubject(subject);
     }

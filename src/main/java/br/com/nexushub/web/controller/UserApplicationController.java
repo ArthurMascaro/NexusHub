@@ -22,15 +22,6 @@ public class UserApplicationController {
     public ResponseEntity<?> createUser(@RequestBody ApplicationUserRequest applicationUserRequest) {
         ApplicationUser applicationUser = applicationUserCRUD.registerNewUser(applicationUserRequest);
 
-        return ResponseEntity.ok(
-                ApplicationUserResponse.createFromApplicationUser(applicationUser)
-        );
-    }
-
-    @GetMapping("/{userId}")
-    public ResponseEntity<ApplicationUserResponse> findUserById(@PathVariable UUID userId) {
-        ApplicationUser applicationUser = applicationUserCRUD.findUserById(userId);
-
         return ResponseEntity.ok(ApplicationUserResponse.createFromApplicationUser(applicationUser));
     }
 }

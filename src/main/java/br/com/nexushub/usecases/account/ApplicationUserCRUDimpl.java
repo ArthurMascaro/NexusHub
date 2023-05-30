@@ -21,11 +21,4 @@ public class ApplicationUserCRUDimpl implements ApplicationUserCRUD {
         return applicationUserDAO.registerNewUser(user.toApplicationUser());
     }
 
-    @Override
-    public ApplicationUser findUserById(UUID userId) {
-        return applicationUserDAO.findUserById(userId)
-                .orElseThrow(() -> new UsernameNotFoundException(String.format("User with id %s not found", userId)));
-    }
-
-
 }

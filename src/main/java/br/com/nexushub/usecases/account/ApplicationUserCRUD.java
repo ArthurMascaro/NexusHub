@@ -9,9 +9,4 @@ public interface ApplicationUserCRUD {
 
     ApplicationUser registerNewUser(ApplicationUserRequest user);
 
-    ApplicationUser findUserById(UUID userId);
-
-    /*ApplicationUser findUserByLogin(String login);*/
-
-
 }
