@@ -22,9 +22,6 @@ public class SubjectDAOimpl implements SubjectDAO {
     @Value("${queries.sql.subject-dao.insert.subject}")
     private String insertSubjectQuery;
 
-    @Value("${queries.sql.subject-dao.select.subject-all}")
-    private String findAllSubjectsQuery;
-
     @Value("${queries.sql.subject-dao.select.subject-by-id}")
     private String findSubjectByIdQuery;
 
@@ -37,7 +34,7 @@ public class SubjectDAOimpl implements SubjectDAO {
     @Value("${queries.sql.subject-dao.delete.subject-by-id}")
     private String deleteSubjectByIdQuery;
 
-    @Value("${queries.sql.subject-dao.select.subject-by-user-id}")
+    @Value("${queries.sql.subject-dao.select.subject-all}")
     private String findAllSubjectsByUserIdQuery;
 
     public SubjectDAOimpl(JdbcTemplate jdbcTemplate) {
@@ -48,20 +45,21 @@ public class SubjectDAOimpl implements SubjectDAO {
     @Override
     public Subject saveNewSubject(Subject subject) {
         UUID subjectId = UUID.randomUUID();
-        jdbcTemplate.update(insertSubjectQuery, subjectId, subject.getName(), subject.getDifficulty(), subject.getColor().name());
+        jdbcTemplate.update(insertSubjectQuery, subjectId, subject.getName(), subject.getDifficulty(), subject.getColor().name(), subject.getOwnerId());
         return subject.getNewInstanceWithId(subjectId);
     }
 
     @Override
-    public void updateSubject(Subject subject) {
+    public Subject updateSubject(Subject subject) {
         jdbcTemplate.update(updateSubjectQuery, subject.getName(),
                 subject.getDifficulty(), subject.getColor().name(), subject.getId());
+        return subject;
     }
 
     @Override
     public Optional<Subject> findSubjectById(UUID id) {
         try {
-            Subject subject = jdbcTemplate.queryForObject(findSubjectByIdQuery, this::mapperSubjectFromRs);
+            Subject subject = jdbcTemplate.queryForObject(findSubjectByIdQuery, this::mapperSubjectFromRs, id);
 
             return Optional.of(subject);
 
@@ -69,13 +67,6 @@ public class SubjectDAOimpl implements SubjectDAO {
             return Optional.empty();
         }
 
-    }
-
-    @Override
-    public List<Subject> findAllSubjects() {
-        List<Subject> subjectArray = jdbcTemplate.query(findAllSubjectsQuery, this::mapperSubjectFromRs);
-
-        return subjectArray;
     }
 
     @Override
@@ -93,16 +84,11 @@ public class SubjectDAOimpl implements SubjectDAO {
 
 
     @Override
-    public boolean deleteSubjectById(UUID id) {
-        Boolean existsSubject = subjectExistsById(id);
-
-        if (!existsSubject)
-            return false;
-
+    public Subject deleteSubjectById(UUID id) {
         if (jdbcTemplate.update(deleteSubjectByIdQuery, id) != 1)
             throw new GenericResourceException("Unexpected error when try delete subject with id=" + id, "Exclusion Error");
 
-        return true;
+        return Subject.createOnlyWithId(id);
     }
 
     private Subject mapperSubjectFromRs(ResultSet rs, int rowNum) throws SQLException {

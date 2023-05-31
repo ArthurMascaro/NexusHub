@@ -29,7 +29,7 @@ queries:
     subject-dao:
       insert:
         subject: >
-          INSERT INTO nexushub_platform.subject(id, name , difficulty, color) VALUES (?, ?, ?, ?::nexushub_platform.subject_color)
+          INSERT INTO nexushub_platform.subject(id, name , difficulty, color, owner_id) VALUES (?, ?, ?, ?::nexushub_platform.subject_color, ?)
       update:
         subject: >
           UPDATE nexushub_platform.subject SET name=?, difficulty=?, color=?::nexushub_platform.subject_color WHERE id=?
@@ -43,8 +43,6 @@ queries:
         subject-by-id: >
           SELECT * FROM nexushub_platform.subject WHERE id=?
         subject-all: >
-          SELECT * FROM nexushub_platform.subject
-        subject-by-user-id: >
           SELECT * FROM nexushub_platform.subject WHERE owner_id=?
     application-user:
       insert:

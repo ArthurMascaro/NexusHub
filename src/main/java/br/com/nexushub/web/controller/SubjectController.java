@@ -32,18 +32,16 @@ public class SubjectController {
 
     @GetMapping("/all")
     public ResponseEntity<List<SubjectResponse>> findAllSubjects() {
-        List<Subject> subjects = subjectCRUD.findAllSubjects();
+        List<Subject> subjects = subjectCRUD.findAllSubjectByUserId();
         return ResponseEntity.ok(subjects.stream()
                 .map(SubjectResponse::createFromSubject)
                 .collect(Collectors.toList()));
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<SubjectResponse>> findSubjectByUserId(@PathVariable("userId") UUID userId) {
-        List<Subject> subjects = subjectCRUD.findSubjectByUserId(userId);
-        return ResponseEntity.ok(subjects.stream()
-                .map(SubjectResponse::createFromSubject)
-                .collect(Collectors.toList()));
+    @GetMapping("/{id}")
+    public ResponseEntity<SubjectResponse> findSubjectById(@PathVariable("id") UUID id){
+        Subject subject = subjectCRUD.findSubjectById(id);
+        return ResponseEntity.ok(SubjectResponse.createFromSubject(subject));
     }
 
     @PutMapping("/{id}")

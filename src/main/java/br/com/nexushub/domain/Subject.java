@@ -48,6 +48,9 @@ public class Subject {
         return new Subject(name, difficulty, color);
     }
 
+    public static Subject createOnlyWithId(UUID id){
+        return new Subject(id);
+    }
     public Subject getNewInstanceWithId(UUID id){
         return new Subject(id, name, difficulty, color, ownerId);
     }
@@ -84,13 +87,11 @@ public class Subject {
         this.color = color;
     }
 
-    @Override
-    public String toString() {
-        return "Subject{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", difficulty=" + difficulty +
-                ", color=" + color +
-                '}';
+    public UUID getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(UUID ownerId) {
+        this.ownerId = ownerId;
     }
 }

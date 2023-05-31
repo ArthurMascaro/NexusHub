@@ -16,9 +16,7 @@ public interface SubjectCRUD {
 
     Subject updateSubjectById(UUID subjectId, SubjectDto subjectDto);
 
-    List<Subject> findAllSubjects();
+    List<Subject> findAllSubjectByUserId();
 
-    List<Subject> findSubjectByUserId(UUID userId);
-
-    void deleteSubjectById(UUID subjectId);
+    Subject deleteSubjectById(UUID subjectId);
 }

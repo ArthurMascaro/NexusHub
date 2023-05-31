@@ -11,14 +11,13 @@ import java.util.UUID;
 public interface SubjectDAO {
         Subject saveNewSubject(Subject subject);
 
-        void updateSubject(Subject subject);
+        Subject updateSubject(Subject subject);
 
         Optional<Subject> findSubjectById(UUID id);
 
-        List<Subject> findAllSubjects();
         List<Subject> findAllSubjectsByUserId(UUID userId);
 
-        boolean deleteSubjectById(UUID id);
+        Subject deleteSubjectById(UUID id);
 
         boolean subjectExistsById(UUID id);
 }

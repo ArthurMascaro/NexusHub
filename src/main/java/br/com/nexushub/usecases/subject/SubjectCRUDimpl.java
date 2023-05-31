@@ -3,11 +3,14 @@ package br.com.nexushub.usecases.subject;
 import br.com.nexushub.configuration.auth.jwt.IAuthenticationFacade;
 import br.com.nexushub.domain.Subject;
 import br.com.nexushub.domain.SubjectColor;
+import br.com.nexushub.usecases.account.gateway.ApplicationUserDAO;
+import br.com.nexushub.usecases.account.model.ApplicationUser;
 import br.com.nexushub.usecases.subject.gateway.SubjectDAO;
 import br.com.nexushub.usecases.util.Notification;
 import br.com.nexushub.usecases.util.Validator;
 import br.com.nexushub.web.exception.ResourceNotFoundException;
 import br.com.nexushub.web.model.subject.request.SubjectDto;
+import org.springframework.dao.PermissionDeniedDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,10 +23,13 @@ public class SubjectCRUDimpl implements SubjectCRUD {
 
     private final SubjectDAO subjectDAO;
 
+    private final ApplicationUserDAO applicationUserDAO;
+
     private final IAuthenticationFacade authentication;
 
-    public SubjectCRUDimpl(SubjectDAO subjectDAO, IAuthenticationFacade authentication) {
+    public SubjectCRUDimpl(SubjectDAO subjectDAO, ApplicationUserDAO applicationUserDAO, IAuthenticationFacade authentication) {
         this.subjectDAO = subjectDAO;
+        this.applicationUserDAO = applicationUserDAO;
         this.authentication = authentication;
     }
 
@@ -36,27 +42,32 @@ public class SubjectCRUDimpl implements SubjectCRUD {
         if (notification.hasErros())
             throw new IllegalArgumentException(notification.errorMessage());
 
-        System.out.println(authentication.getUserAuthenticatedId());
+        subject.setOwnerId(authentication.getUserAuthenticatedId());
 
         return subjectDAO.saveNewSubject(subject);
     }
 
     @Override
     public Subject findSubjectById(UUID subjectId) {
-        Optional<Subject> subjectOptional = subjectDAO.findSubjectById(subjectId);
-
-        if (subjectOptional.isEmpty())
-            throw new ResourceNotFoundException("Subject not found");
-
-        return subjectOptional.get();
+        return subjectDAO.findSubjectById(subjectId)
+                .orElseThrow(() -> new ResourceNotFoundException("Not found subject with id: " + subjectId));
     }
 
     @Override
     public Subject updateSubjectById(UUID subjectId, SubjectDto subjectDto) {
+
         Subject subjectUpdate = subjectDto.toSubject();
-        Optional<Subject> subjectOptional = subjectDAO.findSubjectById(subjectId);
-        if (subjectOptional.isEmpty())
-            throw new ResourceNotFoundException("Not found group participation with id: " + subjectId);
+
+        Subject subject = subjectDAO.findSubjectById(subjectId)
+                .orElseThrow(() -> new ResourceNotFoundException("Not found subject with id: " + subjectId));
+
+        var user = applicationUserDAO.findUserById(authentication.getUserAuthenticatedId())
+                .orElseThrow(() -> new ResourceNotFoundException("Not found user with id: " + authentication.getUserAuthenticatedId()));
+
+        if (!subject.getOwnerId().equals(authentication.getUserAuthenticatedId()))
+            throw new RuntimeException("You dont have permission to udpate this subject");
+
+        //TODO: Criar exceção melhor
 
         Validator<Subject> validator = new SubjectInputRequestValidator();
         Notification notification = validator.validate(subjectUpdate);
@@ -64,30 +75,27 @@ public class SubjectCRUDimpl implements SubjectCRUD {
         if (notification.hasErros())
             throw new IllegalArgumentException(notification.errorMessage());
 
-        var subject = subjectOptional.get();
         subject.setName(subjectUpdate.getName());
         subject.setDifficulty(subjectUpdate.getDifficulty());
         subject.setColor(subjectUpdate.getColor());
-        subjectDAO.updateSubject(subject);
-        return subject;
+        return subjectDAO.updateSubject(subject);
     }
 
     @Override
-    public List<Subject> findAllSubjects() {
-        return subjectDAO.findAllSubjects();
+    public List<Subject> findAllSubjectByUserId() {
+        return subjectDAO.findAllSubjectsByUserId(authentication.getUserAuthenticatedId());
     }
 
     @Override
-    public List<Subject> findSubjectByUserId(UUID userId) {
-        /*if (userDao.findUserById(userId).isEmpty())
-            throw new ResourceNotFoundException("User not found");*/
+    public Subject deleteSubjectById(UUID subjectId) {
+        var subject = subjectDAO.findSubjectById(subjectId)
+                .orElseThrow(() -> new ResourceNotFoundException("Not found subject with id: " + subjectId));
 
-        return subjectDAO.findAllSubjectsByUserId(userId);
-    }
+        if (!subject.getOwnerId().equals(authentication.getUserAuthenticatedId()))
+            throw new RuntimeException("You dont have permission to delete this subject");
 
-    @Override
-    public void deleteSubjectById(UUID subjectId) {
-        if(!subjectDAO.deleteSubjectById(subjectId))
-            throw new IllegalArgumentException("Subject not found");
+        //TODO: exceção melhor
+
+        return subjectDAO.deleteSubjectById(subjectId);
     }
 }
