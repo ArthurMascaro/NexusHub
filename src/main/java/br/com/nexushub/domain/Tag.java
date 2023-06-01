@@ -7,9 +7,12 @@ public class Tag {
     private UUID id;
     private String name;
 
-    public Tag(UUID id, String name) {
+    private UUID ownerId;
+
+    public Tag(UUID id, String name, UUID ownerId) {
         this.id = id;
         this.name = name;
+        this.ownerId = ownerId;
     }
 
     public Tag(String name) {
@@ -30,5 +33,13 @@ public class Tag {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public UUID getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(UUID ownerId) {
+        this.ownerId = ownerId;
     }
 }

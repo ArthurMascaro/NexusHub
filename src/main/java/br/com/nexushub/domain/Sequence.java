@@ -6,22 +6,22 @@ import java.util.UUID;
 public class Sequence {
 
     private UUID id;
-    private int sequenceNumber;
+    private int sequenceStep;
     private int lastSequenceItemStep;
     private SequenceStatus status;
     private ArrayList<SequenceItem> sequenceItems = new ArrayList<>();
 
-    public Sequence(UUID id, int sequenceNumber, int lastSequenceItemStep, SequenceStatus status, ArrayList<SequenceItem> sequenceItems) {
+    public Sequence(UUID id, int sequenceStep, int lastSequenceItemStep, SequenceStatus status, ArrayList<SequenceItem> sequenceItems) {
         this.id = id;
-        this.sequenceNumber = sequenceNumber;
+        this.sequenceStep = sequenceStep;
         this.lastSequenceItemStep = lastSequenceItemStep;
         this.status = status;
         this.sequenceItems = sequenceItems;
     }
 
-    public Sequence(UUID id, int sequenceNumber, int lastSequenceItemStep, SequenceStatus status) {
+    public Sequence(UUID id, int sequenceStep, int lastSequenceItemStep, SequenceStatus status) {
         this.id = id;
-        this.sequenceNumber = sequenceNumber;
+        this.sequenceStep = sequenceStep;
         this.lastSequenceItemStep = lastSequenceItemStep;
         this.status = status;
     }
@@ -42,12 +42,12 @@ public class Sequence {
         this.id = id;
     }
 
-    public int getSequenceNumber() {
-        return sequenceNumber;
+    public int getSequenceStep() {
+        return sequenceStep;
     }
 
-    public void setSequenceNumber(int sequenceNumber) {
-        this.sequenceNumber = sequenceNumber;
+    public void setSequenceStep(int sequenceStep) {
+        this.sequenceStep = sequenceStep;
     }
 
     public ArrayList<SequenceItem> getSequenceItems() {
@@ -74,7 +74,7 @@ public class Sequence {
     public String toString() {
         return "Sequence{" +
                 "id=" + id +
-                ", sequenceNumber=" + sequenceNumber +
+                ", sequenceNumber=" + sequenceStep +
                 ", lastSequenceItemStep=" + lastSequenceItemStep +
                 ", status=" + status +
                 ", sequenceItems=" + sequenceItems +

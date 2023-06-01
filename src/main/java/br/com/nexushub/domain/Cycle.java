@@ -161,7 +161,7 @@ public class Cycle {
             nextSequenceItem.setStudiedHours(LocalTime.MIN);
         } else {
             lastSequence.setStatus(SequenceStatus.FINISHED);
-            newSequenceCreate(lastSequence.getSequenceNumber(), lastSequenceItems);
+            newSequenceCreate(lastSequence.getSequenceStep(), lastSequenceItems);
         }
     }
 
@@ -186,7 +186,7 @@ public class Cycle {
             subjectSequenceItem.setStudiedHours(subjectSequenceItem.getHours());
             if (lastSequenceItems.stream().allMatch(sequenceItem -> sequenceItem.getStatus().equals(SequenceItemStatus.FINISHED)) || lastSequenceItems.stream().allMatch(sequenceItem -> sequenceItem.getStatus().equals(SequenceItemStatus.SKIPPED))){
                 lastSequence.setStatus(SequenceStatus.FINISHED);
-                newSequenceCreate(lastSequence.getSequenceNumber(), lastSequenceItems);
+                newSequenceCreate(lastSequence.getSequenceStep(), lastSequenceItems);
             }
             return;
         }
@@ -210,7 +210,7 @@ public class Cycle {
                 lastSequence.setStatus(SequenceStatus.FINISHED);
                 lastSequence.setLastSequenceItemStep(lastSequence.getSequenceItems().size());
                 currentSequenceItem.setStatus(SequenceItemStatus.FINISHED);
-                newSequenceCreate(lastSequence.getSequenceNumber(), lastSequenceItems);
+                newSequenceCreate(lastSequence.getSequenceStep(), lastSequenceItems);
                 break;
             }
 
@@ -220,7 +220,7 @@ public class Cycle {
 
             currentSequenceItem.setStatus(SequenceItemStatus.FINISHED);
             SequenceItem nextSequenceItem = lastSequenceItems.get(lastSequenceItems.indexOf(lastSequenceItems.stream().filter(sequenceItem -> sequenceItem.getStatus().equals(SequenceItemStatus.PENDING)).findFirst().get()));
-            lastSequence.setLastSequenceItemStep(nextSequenceItem.getSequenceNumber());
+            lastSequence.setLastSequenceItemStep(nextSequenceItem.getStep());
             nextSequenceItem.setStatus(SequenceItemStatus.STUDYING);
             break;
         }
@@ -268,7 +268,7 @@ public class Cycle {
         lastSequence.setStatus(SequenceStatus.SKIPPED);
         lastSequence.setLastSequenceItemStep(lastSequence.getSequenceItems().size());
         lastSequenceItems.stream().filter(sequenceItem -> !sequenceItem.getStatus().equals(SequenceItemStatus.FINISHED)).forEach(sequenceItem -> sequenceItem.setStatus(SequenceItemStatus.SKIPPED));
-        newSequenceCreate(lastSequence.getSequenceNumber(), lastSequenceItems);
+        newSequenceCreate(lastSequence.getSequenceStep(), lastSequenceItems);
     }
 
     //TODO: Criar AddHours para um Subject especifico

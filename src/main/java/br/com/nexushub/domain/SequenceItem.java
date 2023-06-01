@@ -9,26 +9,26 @@ public class SequenceItem {
     private UUID id;
     private LocalTime hours;
     private LocalTime studiedHours;
-    private int sequenceNumber;
+    private int step;
     private SequenceItemStatus status;
     private Subject subject;
 
     public SequenceItem() {
     }
 
-    public SequenceItem(UUID id, LocalTime hours, LocalTime studiedHours, int sequenceNumber, SequenceItemStatus status, Subject subject) {
+    public SequenceItem(UUID id, LocalTime hours, LocalTime studiedHours, int step, SequenceItemStatus status, Subject subject) {
         this.id = id;
         this.hours = hours;
         this.studiedHours = studiedHours;
-        this.sequenceNumber = sequenceNumber;
+        this.step = step;
         this.status = status;
         this.subject = subject;
     }
 
-    public SequenceItem(LocalTime hours, LocalTime studiedHours, int sequenceNumber, SequenceItemStatus status, Subject subject) {
+    public SequenceItem(LocalTime hours, LocalTime studiedHours, int step, SequenceItemStatus status, Subject subject) {
         this.hours = hours;
         this.studiedHours = studiedHours;
-        this.sequenceNumber = sequenceNumber;
+        this.step = step;
         this.status = status;
         this.subject = subject;
     }
@@ -57,12 +57,12 @@ public class SequenceItem {
         this.studiedHours = studiedHours;
     }
 
-    public int getSequenceNumber() {
-        return sequenceNumber;
+    public int getStep() {
+        return step;
     }
 
-    public void setSequenceNumber(int sequenceNumber) {
-        this.sequenceNumber = sequenceNumber;
+    public void setStep(int step) {
+        this.step = step;
     }
 
     public SequenceItemStatus getStatus() {
@@ -87,7 +87,7 @@ public class SequenceItem {
                 "id=" + id +
                 ", hours=" + hours +
                 ", studiedHours=" + studiedHours +
-                ", sequenceNumber=" + sequenceNumber +
+                ", sequenceNumber=" + step +
                 ", status=" + status +
                 ", subject=" + subject +
                 '}';

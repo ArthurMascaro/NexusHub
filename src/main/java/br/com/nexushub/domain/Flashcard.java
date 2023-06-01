@@ -7,9 +7,9 @@ import java.util.UUID;
 public class Flashcard {
 
     private UUID id;
-    private String front;
-    private String back;
-    private LocalDate nextRevisitionDate;
+    private String question;
+    private String answer;
+    private LocalDate nextRevisionDate;
     private LocalDate lastRevisedDate;
     private FlashcardStatus status;
     private double maturity;
@@ -17,11 +17,11 @@ public class Flashcard {
 
     private ArrayList<Tag> tags;
 
-    public Flashcard(UUID id, String front, String back, LocalDate nextRevisitionDate, LocalDate lastRevisedDate, FlashcardStatus status, double maturity, Deck deck, ArrayList<Tag> tags) {
+    public Flashcard(UUID id, String question, String answer, LocalDate nextRevisionDate, LocalDate lastRevisedDate, FlashcardStatus status, double maturity, Deck deck, ArrayList<Tag> tags) {
         this.id = id;
-        this.front = front;
-        this.back = back;
-        this.nextRevisitionDate = nextRevisitionDate;
+        this.question = question;
+        this.answer = answer;
+        this.nextRevisionDate = nextRevisionDate;
         this.lastRevisedDate = lastRevisedDate;
         this.status = status;
         this.maturity = maturity;
@@ -29,10 +29,10 @@ public class Flashcard {
         this.tags = tags;
     }
 
-    public Flashcard(String front, String back, LocalDate nextRevisitionDate, LocalDate lastRevisedDate, FlashcardStatus status, double maturity, Deck deck, ArrayList<Tag> tags) {
-        this.front = front;
-        this.back = back;
-        this.nextRevisitionDate = nextRevisitionDate;
+    public Flashcard(String question, String answer, LocalDate nextRevisionDate, LocalDate lastRevisedDate, FlashcardStatus status, double maturity, Deck deck, ArrayList<Tag> tags) {
+        this.question = question;
+        this.answer = answer;
+        this.nextRevisionDate = nextRevisionDate;
         this.lastRevisedDate = lastRevisedDate;
         this.status = status;
         this.maturity = maturity;
@@ -48,28 +48,28 @@ public class Flashcard {
         this.id = id;
     }
 
-    public String getFront() {
-        return front;
+    public String getQuestion() {
+        return question;
     }
 
-    public void setFront(String front) {
-        this.front = front;
+    public void setQuestion(String question) {
+        this.question = question;
     }
 
-    public String getBack() {
-        return back;
+    public String getAnswer() {
+        return answer;
     }
 
-    public void setBack(String back) {
-        this.back = back;
+    public void setAnswer(String answer) {
+        this.answer = answer;
     }
 
-    public LocalDate getNextRevisitionDate() {
-        return nextRevisitionDate;
+    public LocalDate getNextRevisionDate() {
+        return nextRevisionDate;
     }
 
-    public void setNextRevisitionDate(LocalDate nextRevisitionDate) {
-        this.nextRevisitionDate = nextRevisitionDate;
+    public void setNextRevisionDate(LocalDate nextRevisionDate) {
+        this.nextRevisionDate = nextRevisionDate;
     }
 
     public LocalDate getLastRevisedDate() {

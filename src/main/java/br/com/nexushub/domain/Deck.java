@@ -6,21 +6,21 @@ public class Deck {
 
     private UUID id;
     private String name;
-    private UUID userId;
+    private UUID ownerId;
     private Deck parentDeck;
     private Subject subject;
 
-    public Deck(UUID id, String name, UUID userId, Deck parentDeck, Subject subject) {
+    public Deck(UUID id, String name, UUID ownerId, Deck parentDeck, Subject subject) {
         this.id = id;
         this.name = name;
-        this.userId = userId;
+        this.ownerId = ownerId;
         this.parentDeck = parentDeck;
         this.subject = subject;
     }
 
-    public Deck(String name, UUID userId, Deck parentDeck, Subject subject) {
+    public Deck(String name, UUID ownerId, Deck parentDeck, Subject subject) {
         this.name = name;
-        this.userId = userId;
+        this.ownerId = ownerId;
         this.parentDeck = parentDeck;
         this.subject = subject;
     }
@@ -41,12 +41,12 @@ public class Deck {
         this.name = name;
     }
 
-    public UUID getUserId() {
-        return userId;
+    public UUID getOwnerId() {
+        return ownerId;
     }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public void setOwnerId(UUID ownerId) {
+        this.ownerId = ownerId;
     }
 
     public Deck getParentDeck() {
