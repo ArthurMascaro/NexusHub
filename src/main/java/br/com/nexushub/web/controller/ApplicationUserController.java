@@ -7,21 +7,18 @@ import br.com.nexushub.web.model.account.response.ApplicationUserResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
-
 @RestController
-public class UserApplicationController {
+public class ApplicationUserController {
 
     private final ApplicationUserCRUD applicationUserCRUD;
 
-    public UserApplicationController(ApplicationUserCRUD applicationUserCRUD) {
+    public ApplicationUserController(ApplicationUserCRUD applicationUserCRUD) {
         this.applicationUserCRUD = applicationUserCRUD;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> createUser(@RequestBody ApplicationUserRequest applicationUserRequest) {
+    public ResponseEntity<ApplicationUserResponse> createUser(@RequestBody ApplicationUserRequest applicationUserRequest) {
         ApplicationUser applicationUser = applicationUserCRUD.registerNewUser(applicationUserRequest);
-
         return ResponseEntity.ok(ApplicationUserResponse.createFromApplicationUser(applicationUser));
     }
 }
