@@ -1,7 +1,7 @@
---! SQL para criar o banco de dados --!
+--! SQL for populate database --!
 
 
---! CRIA USUARIO --!
+--! User Queries --!
 insert into nexushub_platform.application_user (id, name, username, password,
     is_account_non_expired, is_account_nonlocked, is_credentials_non_expired, is_enabled)
         values ('f7467ed7-624e-4834-94c3-388dc6ec3072'::uuid, 'arthur mascaro', 'arthur', '$2a$10$Jw8xjo5aMTEfYICDI19VNulcj3RBYl4vgOSj5q5EZdX0u7Uym0Jty', true, true, true, true);
@@ -10,7 +10,7 @@ insert into nexushub_platform.application_user (id, name, username, password,
                                                 is_account_non_expired, is_account_nonlocked, is_credentials_non_expired, is_enabled)
 values ('c7265bb5-3d44-4e33-b420-13dd2cf783dd'::uuid, 'arthur mascaro2', 'arthur22', '$2a$10$cQyDx0O1.eGALqe0IPhjQu1Rt6F0FkD7y9iK32iFS8zxhXOrb/JD2', true, true, true, true);
 
---! CRIA MATERIAS PARA USUÁRIO --!
+--! Subjects Queries --!
 insert into nexushub_platform.subject (id, name, difficulty, owner_id, color)
     values ('f3010575-bb49-45c8-ba59-55117aec93e0', 'Matemática', 7, 'f7467ed7-624e-4834-94c3-388dc6ec3072', 'BLUE');
 
