@@ -48,8 +48,8 @@ ALTER TABLE nexushub_platform.subject
     ADD CONSTRAINT subject_pk PRIMARY KEY (id);
 
 ALTER TABLE nexushub_platform.subject
-    ADD CONSTRAINT subject_user_fk
-        FOREIGN KEY (owner_id) REFERENCES nexushub_platform.application_user(id) ON DELETE CASCADE;
+    ADD CONSTRAINT subject_user_fk FOREIGN KEY (owner_id)
+        REFERENCES nexushub_platform.application_user(id) ON DELETE CASCADE;
 
 CREATE TYPE nexushub_platform.todo_status AS ENUM (
     'PENDING',
@@ -72,8 +72,8 @@ ALTER TABLE nexushub_platform.todo
     ADD CONSTRAINT todo_pk PRIMARY KEY (id);
 
 ALTER TABLE nexushub_platform.todo
-    ADD CONSTRAINT todo_subject_fk
-        FOREIGN KEY (subject_id) REFERENCES nexushub_platform.subject(id) ON DELETE CASCADE;
+    ADD CONSTRAINT todo_subject_fk FOREIGN KEY (subject_id)
+        REFERENCES nexushub_platform.subject(id) ON DELETE CASCADE;
 
 CREATE TABLE nexushub_platform.cycle(
     id uuid not null,
@@ -89,8 +89,8 @@ ALTER TABLE nexushub_platform.cycle
     ADD CONSTRAINT cycle_pk PRIMARY KEY (id);
 
 ALTER TABLE nexushub_platform.cycle
-    ADD CONSTRAINT cycle_user_fk
-        FOREIGN KEY (owner_id) REFERENCES nexushub_platform.application_user(id) ON DELETE CASCADE;
+    ADD CONSTRAINT cycle_user_fk FOREIGN KEY (owner_id)
+        REFERENCES nexushub_platform.application_user(id) ON DELETE CASCADE;
 
 CREATE TYPE nexushub_platform.sequence_status AS ENUM (
     'RUNNING',
@@ -112,8 +112,8 @@ ALTER TABLE nexushub_platform.sequence
     ADD CONSTRAINT sequence_pk PRIMARY KEY (id);
 
 ALTER TABLE nexushub_platform.sequence
-    ADD CONSTRAINT sequence_cycle_fk
-        FOREIGN KEY (cycle_id) REFERENCES nexushub_platform.cycle(id) ON DELETE CASCADE;
+    ADD CONSTRAINT sequence_cycle_fk FOREIGN KEY (cycle_id)
+        REFERENCES nexushub_platform.cycle(id) ON DELETE CASCADE;
 
 CREATE TYPE nexushub_platform.sequence_subject_status AS ENUM (
     'PENDING',
@@ -126,9 +126,10 @@ CREATE TABLE nexushub_platform.sequence_subject(
     id uuid not null,
     step integer not null,
     hours float not null,
-    studied_hours float not null,
+    studied_hours float not null CHECK ( studied_hours <= hours ),
     status nexushub_platform.sequence_subject_status not null,
-    sequence_id uuid not null
+    sequence_id uuid not null,
+    subject_id uuid not null
 );
 
 ALTER TABLE nexushub_platform.sequence_subject OWNER TO "nexushub";
@@ -137,8 +138,12 @@ ALTER TABLE nexushub_platform.sequence_subject
     ADD CONSTRAINT sequence_subject_pk PRIMARY KEY (id);
 
 ALTER TABLE nexushub_platform.sequence_subject
-    ADD CONSTRAINT sequence_subject_sequence_fk
-        FOREIGN KEY (sequence_id) REFERENCES nexushub_platform.sequence(id) ON DELETE CASCADE;
+    ADD CONSTRAINT sequence_subject_sequence_fk FOREIGN KEY (sequence_id)
+        REFERENCES nexushub_platform.sequence(id) ON DELETE CASCADE;
+
+ALTER TABLE nexushub_platform.sequence_subject
+    ADD CONSTRAINT sequence_subject_subject_fk FOREIGN KEY (subject_id)
+        REFERENCES nexushub_platform.subject(id) ON DELETE CASCADE;
 
 CREATE TABLE nexushub_platform.deck(
     id uuid not null,
@@ -169,6 +174,7 @@ CREATE TYPE nexushub_platform.flashcard_status AS ENUM (
     'NEW',
     'LEARNING',
     'REVIEWING',
+    'LEARNED',
     'SUSPENDED'
 );
 
@@ -181,7 +187,7 @@ CREATE TABLE nexushub_platform.flashcard(
     next_revision_date timestamp not null,
     last_revision_date timestamp not null,
     status nexushub_platform.flashcard_status not null,
-    maturity float not null,
+    maturity float not null CHECK ( maturity >= 0 AND maturity <= 1 ),
     deck_id uuid not null
 );
 
