@@ -7,22 +7,48 @@ public class Deck {
     private UUID id;
     private String name;
     private UUID ownerId;
-    private Deck parentDeck;
-    private Subject subject;
+    private UUID parentDeckId;
+    private UUID subjectId;
 
-    public Deck(UUID id, String name, UUID ownerId, Deck parentDeck, Subject subject) {
+    private Deck(UUID id, String name, UUID ownerId, UUID parentDeck, UUID subject) {
         this.id = id;
         this.name = name;
         this.ownerId = ownerId;
-        this.parentDeck = parentDeck;
-        this.subject = subject;
+        this.parentDeckId = parentDeck;
+        this.subjectId = subject;
     }
 
-    public Deck(String name, UUID ownerId, Deck parentDeck, Subject subject) {
+    private Deck(String name, UUID ownerId, UUID parentDeck, UUID subject) {
         this.name = name;
         this.ownerId = ownerId;
-        this.parentDeck = parentDeck;
-        this.subject = subject;
+        this.parentDeckId = parentDeck;
+        this.subjectId = subject;
+    }
+
+    private Deck(String name, UUID subjectId, UUID parentDeckId){
+        this.name = name;
+        this.subjectId = subjectId;
+        this.parentDeckId = parentDeckId;
+    }
+
+    private Deck(UUID id) {
+        this.id = id;
+    }
+
+    public static Deck createWithoutIdAndOwner(String name, UUID subjectId, UUID parentDeckId){
+        return new Deck(name, subjectId, parentDeckId);
+    }
+
+    public static Deck createWithoutId(String name, UUID ownerId, UUID parentDeck, UUID subject){
+        return new Deck(name, ownerId, parentDeck, subject);
+    }
+
+    public static Deck createWithAllArgs(UUID id, String name, UUID ownerId, UUID parentDeck, UUID subject){
+        return new Deck(id, name, ownerId, parentDeck, subject);
+    }
+
+    public static Deck createOnluWithId(UUID id){
+        return new Deck(id);
     }
 
     public UUID getId() {
@@ -49,19 +75,19 @@ public class Deck {
         this.ownerId = ownerId;
     }
 
-    public Deck getParentDeck() {
-        return parentDeck;
+    public UUID getParentDeckId() {
+        return parentDeckId;
     }
 
-    public void setParentDeck(Deck parentDeck) {
-        this.parentDeck = parentDeck;
+    public void setParentDeckId(UUID parentDeckId) {
+        this.parentDeckId = parentDeckId;
     }
 
-    public Subject getSubject() {
-        return subject;
+    public UUID getSubjectId() {
+        return subjectId;
     }
 
-    public void setSubject(Subject subject) {
-        this.subject = subject;
+    public void setSubjectId(UUID subjectId) {
+        this.subjectId = subjectId;
     }
 }
