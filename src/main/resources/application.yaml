@@ -56,6 +56,19 @@ queries:
           SELECT * FROM nexushub_platform.application_user WHERE username=?
         application-user-by-id: >
           SELECT * FROM nexushub_platform.application_user WHERE id=?
-      
 
-
+    deck-dao:
+      insert:
+        deck: >
+            INSERT INTO nexushub_platform.deck(id, name, owner_id, subject_id, parent_deck_id) VALUES (?, ?, ?, ?, ?)
+      select:
+        deck-by-id: >
+          SELECT * FROM nexushub_platform.deck WHERE id=?
+        deck-all: >
+          SELECT * FROM nexushub_platform.deck WHERE owner_id=?
+      update:
+        deck: >
+          UPDATE nexushub_platform.deck SET name=?, subject_id=?, parent_deck_id=? WHERE id=?
+      delete:
+        deck-by-id: >
+          DELETE FROM nexushub_platform.deck WHERE id=?
