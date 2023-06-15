@@ -1,14 +1,12 @@
 package br.com.nexushub.web.controller;
 
 import br.com.nexushub.domain.Subject;
-import br.com.nexushub.domain.SubjectColor;
 import br.com.nexushub.usecases.subject.SubjectCRUD;
-import br.com.nexushub.web.model.subject.request.SubjectDto;
+import br.com.nexushub.web.model.subject.request.SubjectRequest;
 import br.com.nexushub.web.model.subject.response.SubjectResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -25,8 +23,8 @@ public class SubjectController {
 
     @PostMapping("/save")
     public ResponseEntity<SubjectResponse> createNewSubject(
-            @RequestBody SubjectDto subjectDto) {
-        Subject subject = subjectCRUD.createNewSubject(subjectDto);
+            @RequestBody SubjectRequest subjectRequest) {
+        Subject subject = subjectCRUD.createNewSubject(subjectRequest);
         return ResponseEntity.ok(SubjectResponse.createFromSubject(subject));
     }
 
@@ -45,8 +43,8 @@ public class SubjectController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SubjectResponse> updateSubjectById(@PathVariable("id") UUID id, @RequestBody SubjectDto subjectDto) {
-        Subject subject = subjectCRUD.updateSubjectById(id, subjectDto);
+    public ResponseEntity<SubjectResponse> updateSubjectById(@PathVariable("id") UUID id, @RequestBody SubjectRequest subjectRequest) {
+        Subject subject = subjectCRUD.updateSubjectById(id, subjectRequest);
         return ResponseEntity.ok(SubjectResponse.createFromSubject(subject));
     }
     @DeleteMapping("/{id}")

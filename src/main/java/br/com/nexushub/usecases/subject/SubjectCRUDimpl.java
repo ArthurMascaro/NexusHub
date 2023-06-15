@@ -2,20 +2,15 @@ package br.com.nexushub.usecases.subject;
 
 import br.com.nexushub.configuration.auth.jwt.IAuthenticationFacade;
 import br.com.nexushub.domain.Subject;
-import br.com.nexushub.domain.SubjectColor;
 import br.com.nexushub.usecases.account.gateway.ApplicationUserDAO;
-import br.com.nexushub.usecases.account.model.ApplicationUser;
 import br.com.nexushub.usecases.subject.gateway.SubjectDAO;
 import br.com.nexushub.usecases.util.Notification;
 import br.com.nexushub.usecases.util.Validator;
 import br.com.nexushub.web.exception.ResourceNotFoundException;
-import br.com.nexushub.web.model.subject.request.SubjectDto;
-import org.springframework.dao.PermissionDeniedDataAccessException;
+import br.com.nexushub.web.model.subject.request.SubjectRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -34,8 +29,8 @@ public class SubjectCRUDimpl implements SubjectCRUD {
     }
 
     @Override
-    public Subject createNewSubject(SubjectDto subjectDto) {
-        Subject subject = subjectDto.toSubject();
+    public Subject createNewSubject(SubjectRequest subjectRequest) {
+        Subject subject = subjectRequest.toSubject();
         Validator<Subject> validator = new SubjectInputRequestValidator();
         Notification notification = validator.validate(subject);
 
@@ -54,9 +49,9 @@ public class SubjectCRUDimpl implements SubjectCRUD {
     }
 
     @Override
-    public Subject updateSubjectById(UUID subjectId, SubjectDto subjectDto) {
+    public Subject updateSubjectById(UUID subjectId, SubjectRequest subjectRequest) {
 
-        Subject subjectUpdate = subjectDto.toSubject();
+        Subject subjectUpdate = subjectRequest.toSubject();
 
         Subject subject = subjectDAO.findSubjectById(subjectId)
                 .orElseThrow(() -> new ResourceNotFoundException("Not found subject with id: " + subjectId));
