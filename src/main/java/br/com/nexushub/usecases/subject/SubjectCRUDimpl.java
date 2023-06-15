@@ -31,11 +31,6 @@ public class SubjectCRUDimpl implements SubjectCRUD {
     @Override
     public Subject createNewSubject(SubjectRequest subjectRequest) {
         Subject subject = subjectRequest.toSubject();
-        Validator<Subject> validator = new SubjectInputRequestValidator();
-        Notification notification = validator.validate(subject);
-
-        if (notification.hasErros())
-            throw new IllegalArgumentException(notification.errorMessage());
 
         subject.setOwnerId(authentication.getUserAuthenticatedId());
 
@@ -56,24 +51,13 @@ public class SubjectCRUDimpl implements SubjectCRUD {
         Subject subject = subjectDAO.findSubjectById(subjectId)
                 .orElseThrow(() -> new ResourceNotFoundException("Not found subject with id: " + subjectId));
 
-        var user = applicationUserDAO.findUserById(authentication.getUserAuthenticatedId())
-                .orElseThrow(() -> new ResourceNotFoundException("Not found user with id: " + authentication.getUserAuthenticatedId()));
-
         if (!subject.getOwnerId().equals(authentication.getUserAuthenticatedId()))
             throw new RuntimeException("You dont have permission to udpate this subject");
 
         //TODO: Criar exceção melhor
 
-        Validator<Subject> validator = new SubjectInputRequestValidator();
-        Notification notification = validator.validate(subjectUpdate);
-
-        if (notification.hasErros())
-            throw new IllegalArgumentException(notification.errorMessage());
-
-        subject.setName(subjectUpdate.getName());
-        subject.setDifficulty(subjectUpdate.getDifficulty());
-        subject.setColor(subjectUpdate.getColor());
-        return subjectDAO.updateSubject(subject);
+        subjectUpdate.setId(subjectId);
+        return subjectDAO.updateSubject(subjectUpdate);
     }
 
     @Override
