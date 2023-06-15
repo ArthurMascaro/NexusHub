@@ -47,8 +47,8 @@ public class Deck {
         return new Deck(id, name, ownerId, parentDeck, subject);
     }
 
-    public static Deck createOnluWithId(UUID id){
-        return new Deck(id);
+    public Deck getNewInstanceWithId(UUID id){
+        return new Deck(id, this.name, this.ownerId, this.parentDeckId, this.subjectId);
     }
 
     public UUID getId() {
