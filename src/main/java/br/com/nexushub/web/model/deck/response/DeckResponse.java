@@ -1,5 +1,7 @@
 package br.com.nexushub.web.model.deck.response;
 
+import br.com.nexushub.domain.Deck;
+
 import java.util.UUID;
 
 public class DeckResponse {
@@ -12,11 +14,20 @@ public class DeckResponse {
     public DeckResponse() {
     }
 
-    public DeckResponse(UUID id, String name, UUID subjectId, UUID parentDeckId) {
+    private DeckResponse(UUID id, String name, UUID subjectId, UUID parentDeckId) {
         this.id = id;
         this.name = name;
         this.subjectId = subjectId;
         this.parentDeckId = parentDeckId;
+    }
+
+    public static DeckResponse createFromDeck(Deck deck) {
+        return new DeckResponse(
+                deck.getId(),
+                deck.getName(),
+                deck.getSubjectId(),
+                deck.getParentDeckId()
+        );
     }
 
     public UUID getId() {
