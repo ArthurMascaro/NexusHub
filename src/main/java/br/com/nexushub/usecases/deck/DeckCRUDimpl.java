@@ -42,8 +42,12 @@ public class DeckCRUDimpl implements DeckCRUD {
         Deck deck = deckDAO.findDeckById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Not found deck with id: " + id));
 
+        if (deckUpdate.getParentDeckId() != null)
+            deckDAO.findDeckById(deckUpdate.getParentDeckId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Not found parent deck with id: " + id));
+
         if (!deck.getOwnerId().equals(authenticationFacade.getUserAuthenticatedId()))
-            throw new RuntimeException("You dont have permission to udpate this deck");
+            throw new RuntimeException("You dont have permission to update this deck");
 
         deckUpdate.setId(id);
         return deckDAO.updateDeck(deckUpdate);

@@ -2,10 +2,14 @@ package br.com.nexushub.external.persistence;
 
 import br.com.nexushub.domain.Deck;
 import br.com.nexushub.usecases.deck.gateway.DeckDAO;
+import br.com.nexushub.web.exception.GenericResourceException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -53,21 +57,45 @@ public class DeckDAOimpl implements DeckDAO {
 
     @Override
     public Deck updateDeck(Deck deck) {
-        return null;
+        jdbcTemplate.update(updateDeckQuery, deck.getName(),
+                deck.getSubjectId(), deck.getParentDeckId(), deck.getId());
+        return deck;
     }
 
     @Override
     public Optional<Deck> findDeckById(UUID id) {
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(findDeckByIdQuery, (rs, rowNum) ->
+                    Deck.createWithAllArgs(rs.getObject("id", UUID.class),
+                            rs.getString("name"),
+                            rs.getObject("owner_id", UUID.class),
+                            rs.getObject("subject_id", UUID.class),
+                            rs.getObject("parent_deck_id", UUID.class)), id));
+        } catch (Exception e){
+            e.printStackTrace();
+        }
         return Optional.empty();
     }
 
     @Override
     public List<Deck> findAllDecksByUserId(UUID userId) {
-        return null;
+           return jdbcTemplate.query(findAllDecksByUserIdQuery,
+                   this::mapperDeckFromRs, userId);
     }
 
     @Override
     public Deck deleteDeckById(UUID id) {
-        return null;
+        if (jdbcTemplate.update(deleteDeckByIdQuery, id) != 1)
+            throw new GenericResourceException("Unexpected error when try delete deck with id=" + id, "Exclusion Error");
+        return Deck.createWithId(id);
+    }
+
+    private Deck mapperDeckFromRs(ResultSet rs, int rowNum) throws SQLException {
+        UUID id = (UUID) rs.getObject("id");
+        String name = rs.getString("name");
+        UUID owner_id = (UUID) rs.getObject("owner_id");
+        UUID subject_id = (UUID) rs.getObject("subject_id");
+        UUID parent_deck_id = (UUID) rs.getObject("parent_deck_id");
+        return Deck.createWithAllArgs(id, name, owner_id, subject_id, parent_deck_id);
     }
 }
