@@ -9,7 +9,7 @@ spring:
   application:
     name: nexus-hub-application
   datasource:
-    url: jdbc:postgresql://localhost:54 32/nexushub
+    url: jdbc:postgresql://localhost:5432/nexushub
     username: nexushub-app
     password: nexushub-app
     driver-class-name: org.postgresql.Driver
@@ -72,3 +72,21 @@ queries:
       delete:
         deck-by-id: >
           DELETE FROM nexushub_platform.deck WHERE id=?
+
+    flashcard-dao:
+      insert:
+        flashcard: >
+          INSERT INTO nexushub_platform.flashcard(id, question, answer, next_revision_date, last_revision_date,
+          status, maturity, deck_id) VALUES (?, ?, ?, ?, ?, ?::nexushub_platform.flashcard_status, ?, ?)
+      select:
+        flashcard-by-id: >
+          SELECT * FROM nexushub_platform.flashcard WHERE id=?
+        flashcard-all: >
+          SELECT * FROM nexushub_platform.flashcard WHERE deck_id=?
+      update:
+        flashcard: >
+          UPDATE nexushub_platform.flashcard SET question=?, answer=?, next_revision_date=?, last_revision_date=?,
+          status=?::nexushub_platform.flashcard_status, maturity=?, deck_id=? WHERE id=?
+      delete:
+        flashcard-by-id: >
+          DELETE FROM nexushub_platform.flashcard WHERE id=?
