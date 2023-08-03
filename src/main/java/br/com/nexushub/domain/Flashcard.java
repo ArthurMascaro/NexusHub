@@ -10,34 +10,70 @@ public class Flashcard {
     private String question;
     private String answer;
     private LocalDate nextRevisionDate;
-    private LocalDate lastRevisedDate;
+    private LocalDate lastRevisionDate;
     private FlashcardStatus status;
     private double maturity;
-    private Deck deck;
+    private UUID deckId;
 
-    private ArrayList<Tag> tags;
+    private ArrayList<UUID> tagsId;
 
-    public Flashcard(UUID id, String question, String answer, LocalDate nextRevisionDate, LocalDate lastRevisedDate, FlashcardStatus status, double maturity, Deck deck, ArrayList<Tag> tags) {
+    private Flashcard(UUID id, String question, String answer, LocalDate nextRevisionDate, LocalDate lastRevisionDate, FlashcardStatus status, double maturity, UUID deckId, ArrayList<UUID> tagsId) {
         this.id = id;
         this.question = question;
         this.answer = answer;
         this.nextRevisionDate = nextRevisionDate;
-        this.lastRevisedDate = lastRevisedDate;
+        this.lastRevisionDate = lastRevisionDate;
         this.status = status;
         this.maturity = maturity;
-        this.deck = deck;
-        this.tags = tags;
+        this.deckId = deckId;
+        this.tagsId = tagsId;
     }
 
-    public Flashcard(String question, String answer, LocalDate nextRevisionDate, LocalDate lastRevisedDate, FlashcardStatus status, double maturity, Deck deck, ArrayList<Tag> tags) {
+    private Flashcard(String question, String answer, LocalDate nextRevisionDate, LocalDate lastRevisionDate, FlashcardStatus status, double maturity, UUID deckId, ArrayList<UUID> tagsId) {
         this.question = question;
         this.answer = answer;
         this.nextRevisionDate = nextRevisionDate;
-        this.lastRevisedDate = lastRevisedDate;
+        this.lastRevisionDate = lastRevisionDate;
         this.status = status;
         this.maturity = maturity;
-        this.deck = deck;
-        this.tags = tags;
+        this.deckId = deckId;
+        this.tagsId = tagsId;
+    }
+
+    private Flashcard(String question, String answer, UUID deckId, ArrayList<UUID> tagsId){
+        this.question = question;
+        this.answer = answer;
+        this.deckId = deckId;
+        this.tagsId = tagsId;
+        this.nextRevisionDate = LocalDate.now();
+        this.lastRevisionDate = LocalDate.now();
+        this.status = FlashcardStatus.NEW;
+        this.maturity= 0;
+        this.tagsId = new ArrayList<>();
+    }
+
+    private Flashcard(UUID id){
+        this.id = id;
+    }
+
+    public static Flashcard createWithAllArgs(UUID id, String question, String answer, LocalDate nextRevisionDate, LocalDate lastRevisedDate, FlashcardStatus status, double maturity, UUID deckId, ArrayList<UUID> tags){
+        return new Flashcard(id, question, answer, nextRevisionDate, lastRevisedDate, status, maturity, deckId, tags);
+    }
+
+    public static Flashcard createWithoutId(String question, String answer, LocalDate nextRevisionDate, LocalDate lastRevisedDate, FlashcardStatus status, double maturity, UUID deckId, ArrayList<UUID> tags){
+        return new Flashcard(question, answer, nextRevisionDate, lastRevisedDate, status, maturity, deckId, tags);
+    }
+
+    public static Flashcard createNewFlashcard(String question, String answer, UUID deckId, ArrayList<UUID> tags){
+        return new Flashcard(question, answer, deckId, tags);
+    }
+
+    public static Flashcard createWithId(UUID id){
+        return new Flashcard(id);
+    }
+
+    public Flashcard getNewInstanceWithId(UUID id){
+        return new Flashcard(id, question, answer, nextRevisionDate, lastRevisionDate, status, maturity, deckId, tagsId);
     }
 
     public UUID getId() {
@@ -72,12 +108,12 @@ public class Flashcard {
         this.nextRevisionDate = nextRevisionDate;
     }
 
-    public LocalDate getLastRevisedDate() {
-        return lastRevisedDate;
+    public LocalDate getLastRevisionDate() {
+        return lastRevisionDate;
     }
 
-    public void setLastRevisedDate(LocalDate lastRevisedDate) {
-        this.lastRevisedDate = lastRevisedDate;
+    public void setLastRevisionDate(LocalDate lastRevisionDate) {
+        this.lastRevisionDate = lastRevisionDate;
     }
 
     public FlashcardStatus getStatus() {
@@ -96,19 +132,19 @@ public class Flashcard {
         this.maturity = maturity;
     }
 
-    public Deck getDeck() {
-        return deck;
+    public UUID getDeckId() {
+        return deckId;
     }
 
-    public void setDeck(Deck deck) {
-        this.deck = deck;
+    public void setDeckId(UUID deckId) {
+        this.deckId = deckId;
     }
 
-    public ArrayList<Tag> getTags() {
-        return tags;
+    public ArrayList<UUID> getTagsId() {
+        return tagsId;
     }
 
-    public void setTags(ArrayList<Tag> tags) {
-        this.tags = tags;
+    public void setTagsId(ArrayList<UUID> tagsId) {
+        this.tagsId = tagsId;
     }
 }
