@@ -4,6 +4,7 @@ import br.com.nexushub.domain.Flashcard;
 import br.com.nexushub.domain.FlashcardStatus;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 public class FlashcardResponse {
@@ -17,7 +18,9 @@ public class FlashcardResponse {
     private double maturity;
     private UUID deckId;
 
-    private FlashcardResponse(UUID id, String question, String answer, LocalDate nextRevisionDate, LocalDate lastRevisedDate, FlashcardStatus status, double maturity, UUID deckId) {
+    private List<UUID> tagsId;
+
+    private FlashcardResponse(UUID id, String question, String answer, LocalDate nextRevisionDate, LocalDate lastRevisedDate, FlashcardStatus status, double maturity, UUID deckId, List<UUID> tagsId) {
         this.id = id;
         this.question = question;
         this.answer = answer;
@@ -26,6 +29,7 @@ public class FlashcardResponse {
         this.status = status;
         this.maturity = maturity;
         this.deckId = deckId;
+        this.tagsId = tagsId;
     }
 
     public static FlashcardResponse createFromFlashcard(Flashcard flashcard) {
@@ -37,7 +41,8 @@ public class FlashcardResponse {
                 flashcard.getLastRevisionDate(),
                 flashcard.getStatus(),
                 flashcard.getMaturity(),
-                flashcard.getDeckId()
+                flashcard.getDeckId(),
+                flashcard.getTagsId()
         );
     }
 
@@ -103,5 +108,13 @@ public class FlashcardResponse {
 
     public void setDeckId(UUID deckId) {
         this.deckId = deckId;
+    }
+
+    public List<UUID> getTagsId() {
+        return tagsId;
+    }
+
+    public void setTagsId(List<UUID> tagsId) {
+        this.tagsId = tagsId;
     }
 }
