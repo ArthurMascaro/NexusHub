@@ -27,12 +27,21 @@ public class FlashcardController {
         return ResponseEntity.ok(FlashcardResponse.createFromFlashcard(flashcard));
     }
 
+    @PostMapping("/{id}/add-tag/{tagId}")
+    public ResponseEntity<FlashcardResponse> addTagToFlashcard(
+            @PathVariable("id") UUID flashcardId,
+            @PathVariable("tagId") UUID tagId) {
+        Flashcard flashcard = flashcardCRUD.addTagToFlashcard(flashcardId, tagId);
+        return ResponseEntity.ok(FlashcardResponse.createFromFlashcard(flashcard));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<FlashcardResponse> findFlashcardById(
             @PathVariable("id") UUID id){
         Flashcard flashcard = flashcardCRUD.findFlashcardById(id);
         return ResponseEntity.ok(FlashcardResponse.createFromFlashcard(flashcard));
     }
+
 
     @GetMapping("/{deckId}/all")
     public ResponseEntity<List<FlashcardResponse>> findAllFlashcardByDeckId(

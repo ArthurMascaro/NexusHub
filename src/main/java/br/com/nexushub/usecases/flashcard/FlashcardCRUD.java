@@ -17,4 +17,6 @@ public interface FlashcardCRUD {
     Flashcard deleteFlashcardById(UUID id);
 
     List<Flashcard> findAllFlashcardByDeckId(UUID deckId);
+
+    Flashcard addTagToFlashcard(UUID flashcardId, UUID tagId);
 }

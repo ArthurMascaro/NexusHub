@@ -18,4 +18,6 @@ public interface FlashcardDAO {
 
     List<Flashcard> findAllFlashcardByDeckId(UUID deckId);
 
+    Flashcard addTagToFlashcard(Flashcard flashcard, UUID tagId);
+
 }

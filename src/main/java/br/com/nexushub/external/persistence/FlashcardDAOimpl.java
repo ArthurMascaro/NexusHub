@@ -2,6 +2,7 @@ package br.com.nexushub.external.persistence;
 
 import br.com.nexushub.domain.Flashcard;
 import br.com.nexushub.domain.FlashcardStatus;
+import br.com.nexushub.domain.Tag;
 import br.com.nexushub.usecases.flashcard.gateway.FlashcardDAO;
 import br.com.nexushub.usecases.tag.gateway.TagDAO;
 import br.com.nexushub.web.exception.GenericResourceException;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Repository
 public class FlashcardDAOimpl implements FlashcardDAO {
@@ -40,6 +42,9 @@ public class FlashcardDAOimpl implements FlashcardDAO {
 
     @Value("${queries.sql.flashcard-dao.delete.flashcard-by-id}")
     private String deleteFlashcardByIdQuery;
+
+    @Value("${queries.sql.tag-dao.insert.tag-flashcard}")
+    private String addTagToFlashcardQuery;
 
     public FlashcardDAOimpl(JdbcTemplate jdbcTemplate, TagDAO tagDAO) {
         this.jdbcTemplate = jdbcTemplate;
@@ -87,6 +92,13 @@ public class FlashcardDAOimpl implements FlashcardDAO {
                 this::mapperFlashcardFromRs, deckId);
     }
 
+    @Override
+    public Flashcard addTagToFlashcard(Flashcard flashcard, UUID tagId) {
+        jdbcTemplate.update(addTagToFlashcardQuery, flashcard.getId(), tagId);
+        flashcard.addTag(tagId);
+        return flashcard;
+    }
+
     private Flashcard mapperFlashcardFromRs(ResultSet rs, int rowNum) throws SQLException {
         UUID id = (UUID) rs.getObject("id");
         String question = rs.getString("question");
@@ -96,7 +108,8 @@ public class FlashcardDAOimpl implements FlashcardDAO {
         FlashcardStatus status = FlashcardStatus.valueOf(rs.getString("status"));
         Double maturity = rs.getDouble("maturity");
         UUID deckId = (UUID) rs.getObject("deck_id");
-        ArrayList<UUID> tags = new ArrayList<>();
+        ArrayList<UUID> tags = (ArrayList<UUID>) tagDAO.findALlTagsByFlashcardId(id)
+                .stream().map(Tag::getId).collect(Collectors.toList());
         Flashcard flashcard = Flashcard.createWithAllArgs(id, question, answer, nextRevisionDate, lastRevisionDate, status, maturity, deckId, tags);
         return flashcard;
     }
