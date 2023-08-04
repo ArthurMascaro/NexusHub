@@ -147,4 +147,10 @@ public class Flashcard {
     public void setTagsId(ArrayList<UUID> tagsId) {
         this.tagsId = tagsId;
     }
+
+    public void addTag(UUID tagId){
+        if (this.tagsId == null)
+            this.tagsId = new ArrayList<>();
+        this.tagsId.add(tagId);
+    }
 }
