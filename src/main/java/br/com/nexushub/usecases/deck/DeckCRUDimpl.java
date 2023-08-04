@@ -3,6 +3,7 @@ package br.com.nexushub.usecases.deck;
 import br.com.nexushub.configuration.auth.jwt.IAuthenticationFacade;
 import br.com.nexushub.domain.Deck;
 import br.com.nexushub.usecases.deck.gateway.DeckDAO;
+import br.com.nexushub.usecases.subject.SubjectCRUD;
 import br.com.nexushub.web.exception.ResourceNotFoundException;
 import br.com.nexushub.web.model.deck.request.DeckRequest;
 import org.springframework.stereotype.Service;
@@ -15,10 +16,13 @@ public class DeckCRUDimpl implements DeckCRUD {
 
     private final DeckDAO deckDAO;
 
+    private final SubjectCRUD subjectCRUD;
+
     private final IAuthenticationFacade authenticationFacade;
 
-    public DeckCRUDimpl(DeckDAO deckDAO, IAuthenticationFacade authenticationFacade) {
+    public DeckCRUDimpl(DeckDAO deckDAO, SubjectCRUD subjectCRUD, IAuthenticationFacade authenticationFacade) {
         this.deckDAO = deckDAO;
+        this.subjectCRUD = subjectCRUD;
         this.authenticationFacade = authenticationFacade;
     }
 
@@ -39,12 +43,13 @@ public class DeckCRUDimpl implements DeckCRUD {
     public Deck updateDeckById(UUID id, DeckRequest deckRequest) {
         Deck deckUpdate = deckRequest.toDeck();
 
-        Deck deck = deckDAO.findDeckById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Not found deck with id: " + id));
+        Deck deck = findDeckById(id);
 
         if (deckUpdate.getParentDeckId() != null)
-            deckDAO.findDeckById(deckUpdate.getParentDeckId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Not found parent deck with id: " + id));
+            findDeckById(deckUpdate.getParentDeckId());
+
+        if (deckUpdate.getSubjectId() != null)
+            subjectCRUD.findSubjectById(deckUpdate.getSubjectId());
 
         if (!deck.getOwnerId().equals(authenticationFacade.getUserAuthenticatedId()))
             throw new RuntimeException("You dont have permission to update this deck");
@@ -60,8 +65,7 @@ public class DeckCRUDimpl implements DeckCRUD {
 
     @Override
     public Deck deleteDeckById(UUID id) {
-        Deck deck = deckDAO.findDeckById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Not found deck with id: " + id));
+        Deck deck = findDeckById(id);
 
         if (!deck.getOwnerId().equals(authenticationFacade.getUserAuthenticatedId()))
             throw new RuntimeException("You dont have permission to delete this deck");
