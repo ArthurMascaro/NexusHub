@@ -90,3 +90,25 @@ queries:
       delete:
         flashcard-by-id: >
           DELETE FROM nexushub_platform.flashcard WHERE id=?
+
+    tag-dao:
+      insert:
+        tag: >
+          INSERT INTO nexushub_platform.tag(id, name, owner_id) VALUES (?, ?, ?)
+        tag-flashcard: >
+            INSERT INTO nexushub_platform.flashcard_tag(flashcard_id, tag_id) VALUES (?, ?)
+      select:
+        tag-by-id: >
+          SELECT * FROM nexushub_platform.tag WHERE id=?
+        tag-all: >
+          SELECT * FROM nexushub_platform.tag WHERE owner_id=?
+        tag-by-flashcard-id: >
+          SELECT * FROM nexushub_platform.tag tg INNER JOIN nexushub_platform.flashcard_tag ft ON tg.id = ft.tag_id WHERE ft.flashcard_id=?
+      update:
+          tag: >
+              UPDATE nexushub_platform.tag SET name=? WHERE id=?
+      delete:
+          tag-by-id: >
+              DELETE FROM nexushub_platform.tag WHERE id=?
+          tag-flashcard: >
+              DELETE FROM nexushub_platform.flashcard_tag WHERE flashcard_id=? AND tag_id=?
