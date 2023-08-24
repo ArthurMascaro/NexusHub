@@ -1,6 +1,10 @@
 package br.com.nexushub.domain;
 
+import br.com.nexushub.web.model.flashcard.request.FlashcardAnswer;
+import org.apache.tomcat.jni.Local;
+
 import java.time.LocalDate;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -14,7 +18,6 @@ public class Flashcard {
     private FlashcardStatus status;
     private double maturity;
     private UUID deckId;
-
     private ArrayList<UUID> tagsId;
 
     private Flashcard(UUID id, String question, String answer, LocalDate nextRevisionDate, LocalDate lastRevisionDate, FlashcardStatus status, double maturity, UUID deckId, ArrayList<UUID> tagsId) {
@@ -48,7 +51,7 @@ public class Flashcard {
         this.nextRevisionDate = LocalDate.now();
         this.lastRevisionDate = LocalDate.now();
         this.status = FlashcardStatus.NEW;
-        this.maturity= 0;
+        this.maturity = 0;
         this.tagsId = new ArrayList<>();
     }
 
@@ -74,6 +77,83 @@ public class Flashcard {
 
     public Flashcard getNewInstanceWithId(UUID id){
         return new Flashcard(id, question, answer, nextRevisionDate, lastRevisionDate, status, maturity, deckId, tagsId);
+    }
+
+    private void calculateMaturityDelta(FlashcardAnswer answer) {
+        switch (answer) {
+            case AGAIN:
+                maturity = 0;
+                break;
+            case HARD:
+                break;
+            case GOOD:
+                if (maturity + 0.10 > 1)
+                    maturity = 1;
+                maturity += 0.10;
+                break;
+            case EASY:
+                if (maturity + 0.20 > 1)
+                    maturity = 1;
+                maturity += 0.20;
+                break;
+        }
+    }
+
+    public void processResponse(FlashcardAnswer flashcardAnswer, LocalDate today) {
+        double oldMaturity = maturity;
+        double newMaturity = 0.0;
+        int reps = 0;
+        int revisionDaysDistance = 0;
+
+        if (flashcardAnswer == FlashcardAnswer.AGAIN) {
+            maturity = 0.0;
+            nextRevisionDate = today;
+        } else if (flashcardAnswer == FlashcardAnswer.HARD) {
+            revisionDaysDistance = (int) (nextRevisionDate.getLong(ChronoField.DAY_OF_YEAR) - lastRevisionDate.getLong(ChronoField.DAY_OF_YEAR));
+            nextRevisionDate = today.plusDays(revisionDaysDistance);
+        }else {
+            newMaturity = oldMaturity + ((4 - flashcardAnswer.ordinal()) - (4 - flashcardAnswer.ordinal()) * 0.02);
+            if (newMaturity < 1.5) {
+                maturity = 1.5;
+            } else if (newMaturity > 100) {
+                maturity = 100;
+            } else {
+                maturity = newMaturity;
+            }
+
+            if (nextRevisionDate != null)
+                revisionDaysDistance = (int) (nextRevisionDate.getLong(ChronoField.DAY_OF_YEAR) - lastRevisionDate.getLong(ChronoField.DAY_OF_YEAR));
+            if (flashcardAnswer == FlashcardAnswer.EASY) {
+                status = FlashcardStatus.LEARNED;
+                if (revisionDaysDistance == 0){
+                    reps = 4;
+                } else if (revisionDaysDistance > 0 && revisionDaysDistance <= 30){
+                    reps = (int) Math.round(4 * (maturity * 1.5));
+                } else {
+                    reps = (int) Math.round(4 * (maturity * 4));
+                }
+            } else {
+                status = FlashcardStatus.LEARNING;
+                if (revisionDaysDistance == 0){
+                    reps = 1;
+                } else if (revisionDaysDistance > 0 && revisionDaysDistance <= 12){
+                    reps = (int) Math.round(1.5 * (maturity));
+                } else {
+                    reps = (int) Math.round(2 * (maturity * 2));
+                }
+
+            }
+            nextRevisionDate = today.plusDays(reps);
+        }
+        lastRevisionDate = today;
+    }
+
+    public void updateFlashcardStatus(){
+        LocalDate currentDate = LocalDate.now();
+        if (nextRevisionDate.isBefore(currentDate) || nextRevisionDate.isEqual(currentDate))
+            status = FlashcardStatus.REVIEWING;
+        if (nextRevisionDate.isAfter(currentDate))
+            status = FlashcardStatus.LEARNED;
     }
 
     public UUID getId() {
