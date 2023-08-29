@@ -66,6 +66,8 @@ queries:
           SELECT * FROM nexushub_platform.deck WHERE id=?
         deck-all: >
           SELECT * FROM nexushub_platform.deck WHERE owner_id=?
+        deck-children: >
+          SELECT * FROM nexushub_platform.deck WHERE parent_deck_id=?;
       update:
         deck: >
           UPDATE nexushub_platform.deck SET name=?, subject_id=?, parent_deck_id=? WHERE id=?
