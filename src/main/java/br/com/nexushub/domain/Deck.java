@@ -43,7 +43,7 @@ public class Deck {
         return new Deck(name, ownerId, parentDeck, subject);
     }
 
-    public static Deck createWithAllArgs(UUID id, String name, UUID ownerId, UUID parentDeck, UUID subject){
+    public static Deck createWithAllArgs(UUID id, String name, UUID ownerId, UUID subject, UUID parentDeck){
         return new Deck(id, name, ownerId, parentDeck, subject);
     }
 
