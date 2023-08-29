@@ -1,17 +1,20 @@
 package br.com.nexushub.usecases.flashcard;
 
 import br.com.nexushub.configuration.auth.jwt.IAuthenticationFacade;
+import br.com.nexushub.domain.Deck;
 import br.com.nexushub.domain.Flashcard;
 import br.com.nexushub.domain.Tag;
 import br.com.nexushub.usecases.deck.DeckCRUD;
+import br.com.nexushub.usecases.deck.DeckCRUDimpl;
+import br.com.nexushub.usecases.deck.gateway.DeckDAO;
 import br.com.nexushub.usecases.flashcard.gateway.FlashcardDAO;
+import br.com.nexushub.usecases.subject.SubjectCRUD;
 import br.com.nexushub.usecases.tag.TagCRUD;
 import br.com.nexushub.web.exception.ResourceNotFoundException;
 import br.com.nexushub.web.model.flashcard.request.FlashcardRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class FlashcardCRUDimpl implements FlashcardCRUD {
@@ -73,5 +76,35 @@ public class FlashcardCRUDimpl implements FlashcardCRUD {
                 .orElseThrow(() -> new ResourceNotFoundException("Not found flashcard with id: " + flashcardId));
         tagCRUD.findTagById(tagId);
         return flashcardDAO.addTagToFlashcard(flashcard, tagId);
+    }
+
+    @Override
+    public Map<Deck, List<Flashcard>> AllFlashcardForDeckAndChildren(UUID parentId) {
+        List<Deck> childDecks = new ArrayList<>();
+        Set<UUID> visited = new HashSet<>();
+        Map<Deck, List<Flashcard>> allFlashcards = new HashMap<>();
+        findChildDecksRecursive(parentId, deckCRUD.findAllDeckByUserId(), childDecks, visited);
+
+        childDecks.add(0, deckCRUD.findDeckById(parentId));
+
+        for (Deck deck : childDecks){
+            List<Flashcard> flashcards = flashcardDAO.findAllFlashcardByDeckId(deck.getId());
+            allFlashcards.putIfAbsent(deck, flashcards);
+        }
+        return allFlashcards;
+    }
+
+    public void findChildDecksRecursive(UUID parentId, List<Deck> allDecks, List<Deck> childDecks, Set<UUID> visited){
+        visited.add(parentId);
+
+        for (Deck deck : allDecks) {
+            if (deck.getParentDeckId() != null && deck.getParentDeckId().equals(parentId)) {
+                childDecks.add(deck);
+
+                if (!visited.contains(deck.getId())) {
+                    findChildDecksRecursive(deck.getId(), allDecks, childDecks, visited);
+                }
+            }
+        }
     }
 }

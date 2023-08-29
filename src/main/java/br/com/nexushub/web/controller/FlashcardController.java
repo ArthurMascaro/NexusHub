@@ -1,14 +1,17 @@
 package br.com.nexushub.web.controller;
 
+import br.com.nexushub.domain.Deck;
 import br.com.nexushub.domain.Flashcard;
 import br.com.nexushub.usecases.flashcard.FlashcardCRUD;
+import br.com.nexushub.web.model.deck.response.DeckResponse;
+import br.com.nexushub.web.model.deck.response.DeckResponseWithFlashcards;
 import br.com.nexushub.web.model.flashcard.request.FlashcardRequest;
 import br.com.nexushub.web.model.flashcard.response.FlashcardResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RequestMapping("/api/v1/flashcards")
 @RestController
@@ -41,6 +44,16 @@ public class FlashcardController {
         Flashcard flashcard = flashcardCRUD.findFlashcardById(id);
         return ResponseEntity.ok(FlashcardResponse.createFromFlashcard(flashcard));
     }
+
+    @GetMapping("/deck/{id}")
+    public ResponseEntity<List<DeckResponseWithFlashcards>> findAllFlashcardByParentDeckId(
+            @PathVariable("id") UUID parentId){
+        Map<Deck, List<Flashcard>> map = flashcardCRUD.AllFlashcardForDeckAndChildren(parentId);
+        return ResponseEntity.ok(map.entrySet().stream()
+                .map(entry -> DeckResponseWithFlashcards.createFromDeck(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList()));
+    }
+
 
 
     @GetMapping("/{deckId}/all")
