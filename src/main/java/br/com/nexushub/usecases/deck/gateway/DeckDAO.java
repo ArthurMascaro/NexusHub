@@ -16,5 +16,7 @@ public interface DeckDAO{
 
     List<Deck> findAllDecksByUserId(UUID userId);
 
+    List<Deck> getAllDeckChildren(UUID deckId);
+
     Deck deleteDeckById(UUID id);
 }

@@ -34,6 +34,9 @@ public class DeckDAOimpl implements DeckDAO {
     @Value("${queries.sql.deck-dao.delete.deck-by-id}")
     private String deleteDeckByIdQuery;
 
+    @Value("${queries.sql.deck-dao.select.deck-children}")
+    private String selectAllDeckChildrenDeck;
+
     public DeckDAOimpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -80,6 +83,13 @@ public class DeckDAOimpl implements DeckDAO {
            return jdbcTemplate.query(findAllDecksByUserIdQuery,
                    this::mapperDeckFromRs, userId);
     }
+
+    @Override
+    public List<Deck> getAllDeckChildren(UUID deckId) {
+        return jdbcTemplate.query(selectAllDeckChildrenDeck,
+                this::mapperDeckFromRs, deckId);
+    }
+
 
     @Override
     public Deck deleteDeckById(UUID id) {

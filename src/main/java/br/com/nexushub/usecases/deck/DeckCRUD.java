@@ -4,6 +4,7 @@ import br.com.nexushub.domain.Deck;
 import br.com.nexushub.web.model.deck.request.DeckRequest;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface DeckCRUD {
@@ -15,6 +16,8 @@ public interface DeckCRUD {
     Deck updateDeckById(UUID id, DeckRequest deckRequest);
 
     List<Deck> findAllDeckByUserId();
+
+    List<Deck> getAllDeckChildrenById(UUID deckId);
 
     Deck deleteDeckById(UUID id);
 

@@ -64,6 +64,11 @@ public class DeckCRUDimpl implements DeckCRUD {
     }
 
     @Override
+    public List<Deck> getAllDeckChildrenById(UUID deckId) {
+        return deckDAO.getAllDeckChildren(deckId);
+    }
+
+    @Override
     public Deck deleteDeckById(UUID id) {
         Deck deck = findDeckById(id);
 
