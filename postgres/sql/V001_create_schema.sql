@@ -187,7 +187,7 @@ CREATE TABLE nexushub_platform.flashcard(
     next_revision_date timestamp not null,
     last_revision_date timestamp not null,
     status nexushub_platform.flashcard_status not null,
-    maturity float not null CHECK ( maturity >= 0 AND maturity <= 1 ),
+    maturity float not null CHECK ( maturity >= 0 AND maturity <= 100 ),
     deck_id uuid not null
 );
 
