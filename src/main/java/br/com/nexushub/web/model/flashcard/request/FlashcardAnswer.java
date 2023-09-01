@@ -5,5 +5,5 @@ public enum FlashcardAnswer {
     AGAIN,
     HARD,
     GOOD,
-    EASY
+    EASY;
 }

@@ -40,7 +40,7 @@ public class MainTestFlascard {
 
         // Simulate responses for the flashcard
 
-        flashcard4.processResponse(FlashcardAnswer.EASY, LocalDate.now());
+        /*flashcard4.processResponse(FlashcardAnswer.EASY, LocalDate.now());
         System.out.println("Next Revision Date: " + flashcard4.getNextRevisionDate());
         flashcard4.processResponse(FlashcardAnswer.HARD, flashcard4.getNextRevisionDate());
         System.out.println("Next Revision Date: " + flashcard4.getNextRevisionDate());
@@ -55,7 +55,7 @@ public class MainTestFlascard {
         flashcard4.processResponse(FlashcardAnswer.EASY, flashcard4.getNextRevisionDate());
         System.out.println("Next Revision Date: " + flashcard4.getNextRevisionDate());
         flashcard4.processResponse(FlashcardAnswer.EASY, flashcard4.getNextRevisionDate());
-        System.out.println("Next Revision Date: " + flashcard4.getNextRevisionDate());
+        System.out.println("Next Revision Date: " + flashcard4.getNextRevisionDate());*/
 
         // Print the updated information
         System.out.println("Question: " + flashcard4.getQuestion());

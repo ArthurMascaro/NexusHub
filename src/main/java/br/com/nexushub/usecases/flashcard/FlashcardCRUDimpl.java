@@ -11,6 +11,7 @@ import br.com.nexushub.usecases.flashcard.gateway.FlashcardDAO;
 import br.com.nexushub.usecases.subject.SubjectCRUD;
 import br.com.nexushub.usecases.tag.TagCRUD;
 import br.com.nexushub.web.exception.ResourceNotFoundException;
+import br.com.nexushub.web.model.flashcard.request.FlashcardAnswer;
 import br.com.nexushub.web.model.flashcard.request.FlashcardRequest;
 import org.springframework.stereotype.Service;
 
@@ -79,6 +80,14 @@ public class FlashcardCRUDimpl implements FlashcardCRUD {
     }
 
     @Override
+    public Flashcard updateRevisionDate(UUID flashcardId, FlashcardAnswer answer) {
+        Flashcard flashcard = flashcardDAO.findFlashcardById(flashcardId)
+                .orElseThrow(() -> new ResourceNotFoundException("Not found flashcard with id: " + flashcardId));
+        flashcard.processResponse(answer);
+        return flashcardDAO.updateFlashcard(flashcard);
+    }
+
+    @Override
     public Map<Deck, List<Flashcard>> AllFlashcardForDeckAndChildren(UUID parentId) {
         List<Deck> childDecks = new ArrayList<>();
         Set<UUID> visited = new HashSet<>();
@@ -89,6 +98,7 @@ public class FlashcardCRUDimpl implements FlashcardCRUD {
 
         for (Deck deck : childDecks){
             List<Flashcard> flashcards = flashcardDAO.findAllFlashcardByDeckId(deck.getId());
+            flashcards.stream().forEach(Flashcard::updateFlashcardStatus);
             allFlashcards.putIfAbsent(deck, flashcards);
         }
         return allFlashcards;

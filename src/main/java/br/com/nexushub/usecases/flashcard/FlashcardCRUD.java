@@ -2,6 +2,7 @@ package br.com.nexushub.usecases.flashcard;
 
 import br.com.nexushub.domain.Deck;
 import br.com.nexushub.domain.Flashcard;
+import br.com.nexushub.web.model.flashcard.request.FlashcardAnswer;
 import br.com.nexushub.web.model.flashcard.request.FlashcardRequest;
 
 import java.util.List;
@@ -21,6 +22,8 @@ public interface FlashcardCRUD {
     List<Flashcard> findAllFlashcardByDeckId(UUID deckId);
 
     Flashcard addTagToFlashcard(UUID flashcardId, UUID tagId);
+
+    Flashcard updateRevisionDate(UUID flashcardId, FlashcardAnswer answer);
 
     Map<Deck, List<Flashcard>> AllFlashcardForDeckAndChildren(UUID deckId);
 }
