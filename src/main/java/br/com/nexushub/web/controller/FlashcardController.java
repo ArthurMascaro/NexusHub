@@ -5,8 +5,10 @@ import br.com.nexushub.domain.Flashcard;
 import br.com.nexushub.usecases.flashcard.FlashcardCRUD;
 import br.com.nexushub.web.model.deck.response.DeckResponse;
 import br.com.nexushub.web.model.deck.response.DeckResponseWithFlashcards;
+import br.com.nexushub.web.model.flashcard.request.FlashcardAnswer;
 import br.com.nexushub.web.model.flashcard.request.FlashcardRequest;
 import br.com.nexushub.web.model.flashcard.response.FlashcardResponse;
+import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -75,6 +77,14 @@ public class FlashcardController {
     public ResponseEntity<FlashcardResponse> updateFlashcardById(@PathVariable("id") UUID id,
                                                         @RequestBody FlashcardRequest flashcardRequest) {
         Flashcard flashcard = flashcardCRUD.updateFlashcardById(id, flashcardRequest);
+        return ResponseEntity.ok(FlashcardResponse.createFromFlashcard(flashcard));
+    }
+
+        @PatchMapping("/{id}")
+    public ResponseEntity<FlashcardResponse> processResponseFlashcard(@PathVariable("id") UUID id,
+                                                                      @RequestBody String response){
+        FlashcardAnswer answer = FlashcardAnswer.valueOf(response);
+        Flashcard flashcard = flashcardCRUD.updateRevisionDate(id, answer);
         return ResponseEntity.ok(FlashcardResponse.createFromFlashcard(flashcard));
     }
 }
