@@ -99,7 +99,7 @@ public class Flashcard {
         }
     }
 
-    public void processResponse(FlashcardAnswer flashcardAnswer, LocalDate today) {
+    public void processResponse(FlashcardAnswer flashcardAnswer) {
         double oldMaturity = maturity;
         double newMaturity = 0.0;
         int reps = 0;
@@ -107,10 +107,10 @@ public class Flashcard {
 
         if (flashcardAnswer == FlashcardAnswer.AGAIN) {
             maturity = 0.0;
-            nextRevisionDate = today;
+            nextRevisionDate = LocalDate.now();
         } else if (flashcardAnswer == FlashcardAnswer.HARD) {
             revisionDaysDistance = (int) (nextRevisionDate.getLong(ChronoField.DAY_OF_YEAR) - lastRevisionDate.getLong(ChronoField.DAY_OF_YEAR));
-            nextRevisionDate = today.plusDays(revisionDaysDistance);
+            nextRevisionDate = LocalDate.now().plusDays(revisionDaysDistance);
         }else {
             newMaturity = oldMaturity + ((4 - flashcardAnswer.ordinal()) - (4 - flashcardAnswer.ordinal()) * 0.02);
             if (newMaturity < 1.5) {
@@ -143,9 +143,9 @@ public class Flashcard {
                 }
 
             }
-            nextRevisionDate = today.plusDays(reps);
+            nextRevisionDate = LocalDate.now().plusDays(reps);
         }
-        lastRevisionDate = today;
+        lastRevisionDate = LocalDate.now();
     }
 
     public void updateFlashcardStatus(){
