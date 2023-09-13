@@ -45,10 +45,10 @@ public class ApplicationUserDAOimpl implements ApplicationUserDAO {
             rs.setString(2, user.getName());
             rs.setString(3, user.getUsername());
             rs.setString(4, passwordEncoder.encode(user.getPassword()));
-            rs.setBoolean(5, user.isAccountNonExpired());
-            rs.setBoolean(6, user.isAccountNonLocked());
-            rs.setBoolean(7, user.isCredentialsNonExpired());
-            rs.setBoolean(8, user.isEnabled());
+            rs.setBoolean(5, true);
+            rs.setBoolean(6, true);
+            rs.setBoolean(7, true);
+            rs.setBoolean(8, true);
         });
 
         return user.newInstanceWithId(userId);
