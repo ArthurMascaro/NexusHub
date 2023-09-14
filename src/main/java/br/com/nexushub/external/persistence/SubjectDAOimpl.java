@@ -1,7 +1,6 @@
 package br.com.nexushub.external.persistence;
 
 import br.com.nexushub.domain.Subject;
-import br.com.nexushub.domain.SubjectColor;
 import br.com.nexushub.usecases.subject.gateway.SubjectDAO;
 import br.com.nexushub.web.exception.GenericResourceException;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,22 +19,22 @@ public class SubjectDAOimpl implements SubjectDAO {
     private JdbcTemplate jdbcTemplate;
 
     @Value("${queries.sql.subject-dao.insert.subject}")
-    private String insertSubjectQuery;
+    private java.lang.String insertSubjectQuery;
 
     @Value("${queries.sql.subject-dao.select.subject-by-id}")
-    private String findSubjectByIdQuery;
+    private java.lang.String findSubjectByIdQuery;
 
     @Value("${queries.sql.subject-dao.update.subject}")
-    private String updateSubjectQuery;
+    private java.lang.String updateSubjectQuery;
 
     @Value("${queries.sql.subject-dao.exists.subject-by-id}")
-    private String existsSubjectByIdQuery;
+    private java.lang.String existsSubjectByIdQuery;
 
     @Value("${queries.sql.subject-dao.delete.subject-by-id}")
-    private String deleteSubjectByIdQuery;
+    private java.lang.String deleteSubjectByIdQuery;
 
     @Value("${queries.sql.subject-dao.select.subject-all}")
-    private String findAllSubjectsByUserIdQuery;
+    private java.lang.String findAllSubjectsByUserIdQuery;
 
     public SubjectDAOimpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -45,14 +44,14 @@ public class SubjectDAOimpl implements SubjectDAO {
     @Override
     public Subject saveNewSubject(Subject subject) {
         UUID subjectId = UUID.randomUUID();
-        jdbcTemplate.update(insertSubjectQuery, subjectId, subject.getName(), subject.getDifficulty(), subject.getColor().name(), subject.getOwnerId());
+        jdbcTemplate.update(insertSubjectQuery, subjectId, subject.getName(), subject.getDifficulty(), subject.getColor(), subject.getOwnerId());
         return subject.getNewInstanceWithId(subjectId);
     }
 
     @Override
     public Subject updateSubject(Subject subject) {
         jdbcTemplate.update(updateSubjectQuery, subject.getName(),
-                subject.getDifficulty(), subject.getColor().name(), subject.getId());
+                subject.getDifficulty(), subject.getColor(), subject.getId());
         return subject;
     }
 
@@ -93,9 +92,9 @@ public class SubjectDAOimpl implements SubjectDAO {
 
     private Subject mapperSubjectFromRs(ResultSet rs, int rowNum) throws SQLException {
         UUID subjectId = (UUID) rs.getObject("id");
-        String name = rs.getString("name");
+        java.lang.String name = rs.getString("name");
         int difficulty = rs.getInt("difficulty");
-        SubjectColor color = SubjectColor.valueOf(rs.getString("color"));
+        String color = rs.getString("color");
         UUID ownerId = (UUID) rs.getObject("owner_id");
         return Subject.createWithAllFields(subjectId, name, difficulty, color, ownerId);
     }
