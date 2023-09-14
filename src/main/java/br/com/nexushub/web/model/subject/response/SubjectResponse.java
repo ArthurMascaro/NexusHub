@@ -1,7 +1,6 @@
 package br.com.nexushub.web.model.subject.response;
 
 import br.com.nexushub.domain.Subject;
-import br.com.nexushub.domain.SubjectColor;
 
 import java.util.UUID;
 
@@ -10,9 +9,9 @@ public class SubjectResponse {
     private UUID id;
     private String name;
     private int difficulty;
-    private SubjectColor color;
+    private String color;
 
-    private SubjectResponse(UUID id, String name, int difficulty, SubjectColor color) {
+    private SubjectResponse(UUID id, String name, int difficulty, String color) {
         this.id = id;
         this.name = name;
         this.difficulty = difficulty;
@@ -28,7 +27,7 @@ public class SubjectResponse {
         );
     }
 
-    public String getName() {
+    public java.lang.String getName() {
         return name;
     }
 
@@ -44,11 +43,11 @@ public class SubjectResponse {
         this.difficulty = difficulty;
     }
 
-    public SubjectColor getColor() {
+    public String getColor() {
         return color;
     }
 
-    public void setColor(SubjectColor color) {
+    public void setColor(String color) {
         this.color = color;
     }
 

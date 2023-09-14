@@ -7,11 +7,11 @@ public class Subject {
     private UUID id;
     private String name;
     private int difficulty;
-    private SubjectColor color;
+    private String color;
 
     private UUID ownerId;
 
-    private Subject(UUID id, String name, int difficulty, SubjectColor color, UUID ownerId) {
+    private Subject(UUID id, String name, int difficulty, String color, UUID ownerId) {
         this.id = id;
         this.name = name;
         this.difficulty = difficulty;
@@ -19,14 +19,14 @@ public class Subject {
         this.ownerId = ownerId;
     }
 
-    private Subject(String name, int difficulty, SubjectColor color, UUID ownerId) {
+    private Subject(String name, int difficulty, String color, UUID ownerId) {
         this.name = name;
         this.difficulty = difficulty;
         this.color = color;
         this.ownerId = ownerId;
     }
 
-    private Subject(String name, int difficulty, SubjectColor color) {
+    private Subject(String name, int difficulty, String color) {
         this.name = name;
         this.difficulty = difficulty;
         this.color = color;
@@ -36,15 +36,15 @@ public class Subject {
         this.id = id;
     }
 
-    public static Subject createWithAllFields(UUID id, String name, int difficulty, SubjectColor color, UUID ownerId) {
+    public static Subject createWithAllFields(UUID id, String name, int difficulty, String color, UUID ownerId) {
         return new Subject(id, name, difficulty, color, ownerId);
     }
 
-    public static Subject createWithoutId(String name, int difficulty, SubjectColor color, UUID ownerId) {
+    public static Subject createWithoutId(String name, int difficulty, String color, UUID ownerId) {
         return new Subject(name, difficulty, color, ownerId);
     }
 
-    public static Subject createWithoutIdAndOwner(String name, int difficulty, SubjectColor color) {
+    public static Subject createWithoutIdAndOwner(String name, int difficulty, String color) {
         return new Subject(name, difficulty, color);
     }
 
@@ -79,11 +79,11 @@ public class Subject {
         this.difficulty = difficulty;
     }
 
-    public SubjectColor getColor() {
+    public String getColor() {
         return color;
     }
 
-    public void setColor(SubjectColor color) {
+    public void setColor(String color) {
         this.color = color;
     }
 
