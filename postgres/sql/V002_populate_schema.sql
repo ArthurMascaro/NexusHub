@@ -19,11 +19,11 @@ insert into nexushub_platform.application_user (id, name, username, password,
 
 
 insert into nexushub_platform.subject (id, name, difficulty, owner_id, color)
-    values ('f3010575-bb49-45c8-ba59-55117aec93e0'::uuid, 'Matemática', 7,
+    values ('f3010575-bb49-45c8-ba59-55117aec93e0'::uuid, 'Matemática', 5,
             'f7467ed7-624e-4834-94c3-388dc6ec3072'::uuid, '#AD6FEB');
 
 insert into nexushub_platform.subject (id, name, difficulty, owner_id, color)
-    values ('c62f835d-d035-4b4e-b1ed-ac949c84f3b4'::uuid, 'Português', 5,
+    values ('c62f835d-d035-4b4e-b1ed-ac949c84f3b4'::uuid, 'Português', 3,
             'f7467ed7-624e-4834-94c3-388dc6ec3072'::uuid, '#FFC107');
 
 insert into nexushub_platform.subject (id, name, difficulty, owner_id, color)
@@ -31,7 +31,7 @@ insert into nexushub_platform.subject (id, name, difficulty, owner_id, color)
             'f7467ed7-624e-4834-94c3-388dc6ec3072'::uuid, '#FF5722');
 
 insert into nexushub_platform.subject (id, name, difficulty, owner_id, color)
-    values ('701a4fc5-543a-4aad-9cc9-71ae596171d1'::uuid, 'Biologia', 2,
+    values ('701a4fc5-543a-4aad-9cc9-71ae596171d1'::uuid, 'Biologia', 1,
         'f7467ed7-624e-4834-94c3-388dc6ec3072'::uuid, '#4CAF50');
 
 

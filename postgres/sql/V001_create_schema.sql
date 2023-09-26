@@ -21,7 +21,7 @@ ALTER TABLE nexushub_platform.application_user
 CREATE TABLE nexushub_platform.subject(
     id uuid not null,
     name varchar(255) not null,
-    difficulty integer not null,
+    difficulty integer not null CHECK (difficulty >= 1 AND difficulty <= 5 ),
     owner_id uuid not null,
     color char(7) not null
 );
