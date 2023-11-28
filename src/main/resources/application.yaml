@@ -57,6 +57,25 @@ queries:
         application-user-by-id: >
           SELECT * FROM nexushub_platform.application_user WHERE id=?
 
+    todo-dao:
+      insert:
+        todo: >
+          INSERT INTO nexushub_platform.todo (id, text, date, status, subject_id) VALUES (?, ?, ?, ?::nexushub_platform.todo_status, ?)
+      select:
+        todo-by-id: >
+          SELECT * FROM nexushub_platform.todo WHERE id=?
+        todo-all: >
+          SELECT * FROM nexushub_platform.todo WHERE subject_id=?
+      update:
+        todo: >
+          UPDATE nexushub_platform.todo SET text=?, date=?, subject_id=? WHERE id=?
+        todo-status: >
+          UPDATE nexushub_platform.todo SET status=?::nexushub_platform.todo_status WHERE id=?
+      delete:
+        todo-by-id: >
+          DELETE FROM nexushub_platform.todo WHERE id=?
+        
+
     deck-dao:
       insert:
         deck: >
