@@ -26,6 +26,19 @@ public class Todo {
         this.subject = subject;
     }
 
+    private Todo(String text, Subject subject) {
+        this.text = text;
+        this.subject = subject;
+    }
+
+    public Todo(UUID id) {
+        this.id = id;
+    }
+
+    public static Todo createWithoutId(String text, Subject subject){
+        return new Todo(text, subject);
+    }
+
     public Todo() {
     }
 
